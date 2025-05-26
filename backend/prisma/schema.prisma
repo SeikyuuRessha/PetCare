@@ -1,0 +1,271 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  userId   String @id @db.VarChar(50)
+  username String @unique @db.VarChar(50)
+  email    String? @unique @db.VarChar(100)
+  fullName String @db.NVarChar(50)
+  password String @db.VarChar(255)
+  phone    String? @unique @db.VarChar(20)
+  address  String? @db.VarChar(200)
+  role     Role   @default(USER)
+
+  // Relations
+  pets                Pet[]
+  medicalRecords      MedicalRecord[]
+  notifications       Notification[]
+  payments            Payment[]
+
+  @@map("User")
+}
+
+model Pet {
+  petId            String  @id @db.VarChar(50)
+  name             String  @db.NVarChar(50)
+  gender           String? @db.VarChar(10)
+  species          String? @db.NVarChar(50)
+  breed            String? @db.NVarChar(50)
+  color            String? @db.NVarChar(50)
+  imageUrl         String? @db.VarChar(255)
+  identifyingMarks String? @db.NVarChar(500)
+  ownerId          String? @db.VarChar(50)
+
+  // Relations
+  owner               User?                 @relation(fields: [ownerId], references: [userId])
+  appointments        Appointment[]
+  serviceBookings     ServiceBooking[]
+  boardingReservations BoardingReservation[]
+
+  @@map("Pet")
+}
+
+model Appointment {
+  appointmentId   String            @id @db.VarChar(50)
+  petId           String            @db.VarChar(50)
+  appointmentDate DateTime          @db.DateTime2(4)
+  status          AppointmentStatus @default(PENDING)
+  symptoms        String?           @db.NVarChar(500)
+  createdAt       DateTime          @default(now()) @db.DateTime
+
+  // Relations
+  pet           Pet             @relation(fields: [petId], references: [petId])
+  medicalRecord MedicalRecord?
+
+  @@map("Appointment")
+}
+
+model MedicalRecord {
+  recordId        String    @id @db.VarChar(50)
+  doctorId        String    @db.VarChar(50)
+  appointmentId   String    @unique @db.VarChar(50)
+  diagnosis       String?   @db.NVarChar(500)
+  nextCheckupDate DateTime? @db.Date
+
+  // Relations
+  doctor       User          @relation(fields: [doctorId], references: [userId])
+  appointment  Appointment   @relation(fields: [appointmentId], references: [appointmentId])
+  prescription Prescription?
+
+  @@map("MedicalRecord")
+}
+
+model Service {
+  serviceId   String @id @db.VarChar(50)
+  serviceName String @db.NVarChar(100)
+  description String? @db.NVarChar(500)
+
+  // Relations
+  serviceOptions ServiceOption[]
+
+  @@map("Service")
+}
+
+model ServiceOption {
+  optionId    String  @id @db.VarChar(50)
+  optionName  String  @db.NVarChar(100)
+  price       Decimal? @db.Decimal(10, 2)
+  description String? @db.NVarChar(500)
+  serviceId   String  @db.VarChar(50)
+
+  // Relations
+  service         Service          @relation(fields: [serviceId], references: [serviceId])
+  serviceBookings ServiceBooking[]
+
+  @@map("ServiceOption")
+}
+
+model ServiceBooking {
+  bookingId           String               @id @db.VarChar(50)
+  petId               String               @db.VarChar(50)
+  serviceOptionId     String               @db.VarChar(50)
+  bookingDate         DateTime             @db.DateTime2(4)
+  status              ServiceBookingStatus @default(PENDING)
+  specialRequirements String?              @db.NVarChar(500)
+  createdAt           DateTime             @default(now()) @db.DateTime2(4)
+
+  // Relations
+  pet           Pet           @relation(fields: [petId], references: [petId])
+  serviceOption ServiceOption @relation(fields: [serviceOptionId], references: [optionId])
+  payments      Payment[]
+
+  @@map("ServiceBooking")
+}
+
+model Room {
+  roomId      String     @id @db.VarChar(50)
+  roomNumber  Int        @unique
+  capacity    Int
+  status      RoomStatus @default(AVAILABLE)
+  description String?    @db.NVarChar(500)
+  price       Decimal?   @db.Decimal(10, 2)
+
+  // Relations
+  boardingReservations BoardingReservation[]
+
+  @@map("Room")
+}
+
+model BoardingReservation {
+  reservationId String                    @id @db.VarChar(50)
+  petId         String                    @db.VarChar(50)
+  roomId        String                    @db.VarChar(50)
+  checkInDate   DateTime                  @db.Date
+  checkOutDate  DateTime                  @db.Date
+  status        BoardingReservationStatus @default(CONFIRMED)
+  createdAt     DateTime                  @default(now()) @db.DateTime
+
+  // Relations
+  pet      Pet       @relation(fields: [petId], references: [petId])
+  room     Room      @relation(fields: [roomId], references: [roomId])
+  payments Payment[]
+
+  @@map("BoardingReservation")
+}
+
+model Notification {
+  notificationId String           @id @db.VarChar(50)
+  userId         String           @db.VarChar(50)
+  title          String?          @db.NVarChar(100)
+  message        String?          @db.NVarChar(1000)
+  type           NotificationType @default(INFO)
+  createdAt      DateTime         @default(now()) @db.DateTime2(4)
+
+  // Relations
+  user User @relation(fields: [userId], references: [userId])
+
+  @@map("Notification")
+}
+
+model Medicine {
+  medicineId    String @id @db.VarChar(50)
+  name          String @db.NVarChar(100)
+  unit          String? @db.NVarChar(20)
+  concentration String? @db.NVarChar(50)
+
+  // Relations
+  medicationPackages MedicationPackage[]
+
+  @@map("Medicine")
+}
+
+model MedicationPackage {
+  packageId   String  @id @db.VarChar(50)
+  medicineId  String  @db.VarChar(50)
+  quantity    Int
+  instruction String? @db.NVarChar(500)
+
+  // Relations
+  medicine            Medicine             @relation(fields: [medicineId], references: [medicineId])
+  prescriptionDetails PrescriptionDetail[]
+
+  @@map("MedicationPackage")
+}
+
+model Prescription {
+  prescriptionId String @id @db.VarChar(50)
+  recordId       String @unique @db.VarChar(50)
+
+  // Relations
+  medicalRecord       MedicalRecord        @relation(fields: [recordId], references: [recordId])
+  prescriptionDetails PrescriptionDetail[]
+
+  @@map("Prescription")
+}
+
+model PrescriptionDetail {
+  prescriptionId String
+  packageId      String
+
+  // Relations
+  prescription       Prescription      @relation(fields: [prescriptionId], references: [prescriptionId])
+  medicationPackage  MedicationPackage @relation(fields: [packageId], references: [packageId])
+
+  @@id([prescriptionId, packageId])
+  @@map("PrescriptionDetail")
+}
+
+model Payment {
+  paymentId         String    @id @db.VarChar(50)
+  userId            String    @db.VarChar(50)
+  paymentDate       DateTime  @default(now()) @db.DateTime2(4)
+  totalAmount       Decimal?  @db.Decimal(10, 2)
+  status            String?   @db.VarChar(20)
+  roomBookId        String?   @db.VarChar(50)
+  serviceBookingId  String?   @db.VarChar(50)
+
+  // Relations
+  user                User                 @relation(fields: [userId], references: [userId])
+  boardingReservation BoardingReservation? @relation(fields: [roomBookId], references: [reservationId])
+  serviceBooking      ServiceBooking?      @relation(fields: [serviceBookingId], references: [bookingId])
+
+  @@map("Payment")
+}
+
+// Enums
+enum Role {
+  USER
+  EMPLOYEE
+  DOCTOR
+  ADMIN
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+enum ServiceBookingStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum RoomStatus {
+  AVAILABLE
+  OCCUPIED
+  MAINTENANCE
+}
+
+enum BoardingReservationStatus {
+  CONFIRMED
+  CHECKED_IN
+  CHECKED_OUT
+  CANCELLED
+}
+
+enum NotificationType {
+  REMINDER
+  ALERT
+  INFO
+}
