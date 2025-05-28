@@ -1,0 +1,593 @@
+{
+  "nodes": [
+    {
+      "id": "src/UserPage/HomePage.tsx",
+      "label": "HomePage",
+      "routes": [
+        "/"
+      ],
+      "isRoot": true
+    },
+    {
+      "id": "src/UserPage/LoginPage.tsx",
+      "label": "LoginPage",
+      "routes": [
+        "/login"
+      ]
+    },
+    {
+      "id": "src/UserPage/CareServices_GroomingPage.tsx",
+      "label": "CareServices_GroomingPage",
+      "routes": [
+        "/services"
+      ]
+    },
+    {
+      "id": "src/UserPage/PetInformationPage.tsx",
+      "label": "PetInformationPage",
+      "routes": [
+        "/pet-info"
+      ]
+    },
+    {
+      "id": "src/UserPage/UserInformationPage.tsx",
+      "label": "UserInformationPage",
+      "routes": [
+        "/account"
+      ]
+    },
+    {
+      "id": "src/UserPage/AppointmentPage.tsx",
+      "label": "AppointmentPage",
+      "routes": [
+        "/appointment"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "src\\components\\Header.tsx:27:8-to-src\\UserPage\\HomePage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\HomePage.tsx",
+      "data": {
+        "viaRoute": "/",
+        "trigger": {
+          "element": "<Link to=\"/\" className={getLinkClassName('/')}>\r\n          Trang chủ\r\n        </Link>",
+          "line": 27,
+          "endLine": 29,
+          "column": 8,
+          "endColumn": 15,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\Header.tsx:30:8-to-src\\UserPage\\PetInformationPage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\PetInformationPage.tsx",
+      "data": {
+        "viaRoute": "/pet-info",
+        "trigger": {
+          "element": "<Link to=\"/pet-info\" className={getLinkClassName('/pet-info')}>\r\n          Thông tin thú cưng\r\n        </Link>",
+          "line": 30,
+          "endLine": 32,
+          "column": 8,
+          "endColumn": 15,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\Header.tsx:33:8-to-src\\UserPage\\CareServices_GroomingPage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\CareServices_GroomingPage.tsx",
+      "data": {
+        "viaRoute": "/services",
+        "trigger": {
+          "element": "<Link to=\"/services\" className={getLinkClassName('/services')}>\r\n          Dịch vụ chăm sóc\r\n        </Link>",
+          "line": 33,
+          "endLine": 35,
+          "column": 8,
+          "endColumn": 15,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\Header.tsx:36:8-to-src\\UserPage\\AppointmentPage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\AppointmentPage.tsx",
+      "data": {
+        "viaRoute": "/appointment",
+        "trigger": {
+          "element": "<Link to=\"/appointment\" className={getLinkClassName('/appointment')}>\r\n          Đặt lịch khám\r\n        </Link>",
+          "line": 36,
+          "endLine": 38,
+          "column": 8,
+          "endColumn": 15,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\Header.tsx:50:12-to-src\\UserPage\\UserInformationPage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\UserInformationPage.tsx",
+      "data": {
+        "viaRoute": "/account",
+        "trigger": {
+          "element": "<Link to=\"/account\" className={getLinkClassName('/account')}>\r\n              Tài khoản \r\n            </Link>",
+          "line": 50,
+          "endLine": 52,
+          "column": 12,
+          "endColumn": 19,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\Header.tsx:55:10-to-src\\UserPage\\LoginPage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\LoginPage.tsx",
+      "data": {
+        "viaRoute": "/login",
+        "trigger": {
+          "element": "<Link\r\n            to=\"/login\"\r\n            className=\"bg-[#1797a6] text-white px-6 py-2 rounded-full font-semibold ml-4 hover:bg-[#127c8a] transition-colors\"\r\n          >\r\n            Đăng nhập\r\n          </Link>",
+          "line": 55,
+          "endLine": 60,
+          "column": 10,
+          "endColumn": 17,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\UserPage\\LoginPage.tsx:11:4-to-src\\UserPage\\HomePage.tsx",
+      "source": "src\\UserPage\\LoginPage.tsx",
+      "target": "src\\UserPage\\HomePage.tsx",
+      "data": {
+        "viaRoute": "/",
+        "trigger": {
+          "element": "navigate('/')",
+          "line": 11,
+          "endLine": 11,
+          "column": 4,
+          "endColumn": 17,
+          "sourceFile": "src\\UserPage\\LoginPage.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\UserPage\\LoginPage.tsx:16:4-to-src\\UserPage\\HomePage.tsx",
+      "source": "src\\UserPage\\LoginPage.tsx",
+      "target": "src\\UserPage\\HomePage.tsx",
+      "data": {
+        "viaRoute": "/",
+        "trigger": {
+          "element": "navigate('/')",
+          "line": 16,
+          "endLine": 16,
+          "column": 4,
+          "endColumn": 17,
+          "sourceFile": "src\\UserPage\\LoginPage.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\UserPage\\LoginPage.tsx:38:8-to-src\\UserPage\\HomePage.tsx",
+      "source": "src\\UserPage\\LoginPage.tsx",
+      "target": "src\\UserPage\\HomePage.tsx",
+      "data": {
+        "viaRoute": "/",
+        "trigger": {
+          "element": "<Link to=\"/\" className=\"absolute top-4 left-4 text-sm text-black\">Quay trở lại</Link>",
+          "line": 38,
+          "endLine": 38,
+          "column": 8,
+          "endColumn": 93,
+          "sourceFile": "src\\UserPage\\LoginPage.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\Header.tsx:27:8-to-src\\UserPage\\HomePage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\HomePage.tsx",
+      "data": {
+        "viaRoute": "/",
+        "trigger": {
+          "element": "<Link to=\"/\" className={getLinkClassName('/')}>\r\n          Trang chủ\r\n        </Link>",
+          "line": 27,
+          "endLine": 29,
+          "column": 8,
+          "endColumn": 15,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\Header.tsx:30:8-to-src\\UserPage\\PetInformationPage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\PetInformationPage.tsx",
+      "data": {
+        "viaRoute": "/pet-info",
+        "trigger": {
+          "element": "<Link to=\"/pet-info\" className={getLinkClassName('/pet-info')}>\r\n          Thông tin thú cưng\r\n        </Link>",
+          "line": 30,
+          "endLine": 32,
+          "column": 8,
+          "endColumn": 15,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\Header.tsx:33:8-to-src\\UserPage\\CareServices_GroomingPage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\CareServices_GroomingPage.tsx",
+      "data": {
+        "viaRoute": "/services",
+        "trigger": {
+          "element": "<Link to=\"/services\" className={getLinkClassName('/services')}>\r\n          Dịch vụ chăm sóc\r\n        </Link>",
+          "line": 33,
+          "endLine": 35,
+          "column": 8,
+          "endColumn": 15,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\Header.tsx:36:8-to-src\\UserPage\\AppointmentPage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\AppointmentPage.tsx",
+      "data": {
+        "viaRoute": "/appointment",
+        "trigger": {
+          "element": "<Link to=\"/appointment\" className={getLinkClassName('/appointment')}>\r\n          Đặt lịch khám\r\n        </Link>",
+          "line": 36,
+          "endLine": 38,
+          "column": 8,
+          "endColumn": 15,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\Header.tsx:50:12-to-src\\UserPage\\UserInformationPage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\UserInformationPage.tsx",
+      "data": {
+        "viaRoute": "/account",
+        "trigger": {
+          "element": "<Link to=\"/account\" className={getLinkClassName('/account')}>\r\n              Tài khoản \r\n            </Link>",
+          "line": 50,
+          "endLine": 52,
+          "column": 12,
+          "endColumn": 19,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\Header.tsx:55:10-to-src\\UserPage\\LoginPage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\LoginPage.tsx",
+      "data": {
+        "viaRoute": "/login",
+        "trigger": {
+          "element": "<Link\r\n            to=\"/login\"\r\n            className=\"bg-[#1797a6] text-white px-6 py-2 rounded-full font-semibold ml-4 hover:bg-[#127c8a] transition-colors\"\r\n          >\r\n            Đăng nhập\r\n          </Link>",
+          "line": 55,
+          "endLine": 60,
+          "column": 10,
+          "endColumn": 17,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\Header.tsx:27:8-to-src\\UserPage\\HomePage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\HomePage.tsx",
+      "data": {
+        "viaRoute": "/",
+        "trigger": {
+          "element": "<Link to=\"/\" className={getLinkClassName('/')}>\r\n          Trang chủ\r\n        </Link>",
+          "line": 27,
+          "endLine": 29,
+          "column": 8,
+          "endColumn": 15,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\Header.tsx:30:8-to-src\\UserPage\\PetInformationPage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\PetInformationPage.tsx",
+      "data": {
+        "viaRoute": "/pet-info",
+        "trigger": {
+          "element": "<Link to=\"/pet-info\" className={getLinkClassName('/pet-info')}>\r\n          Thông tin thú cưng\r\n        </Link>",
+          "line": 30,
+          "endLine": 32,
+          "column": 8,
+          "endColumn": 15,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\Header.tsx:33:8-to-src\\UserPage\\CareServices_GroomingPage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\CareServices_GroomingPage.tsx",
+      "data": {
+        "viaRoute": "/services",
+        "trigger": {
+          "element": "<Link to=\"/services\" className={getLinkClassName('/services')}>\r\n          Dịch vụ chăm sóc\r\n        </Link>",
+          "line": 33,
+          "endLine": 35,
+          "column": 8,
+          "endColumn": 15,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\Header.tsx:36:8-to-src\\UserPage\\AppointmentPage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\AppointmentPage.tsx",
+      "data": {
+        "viaRoute": "/appointment",
+        "trigger": {
+          "element": "<Link to=\"/appointment\" className={getLinkClassName('/appointment')}>\r\n          Đặt lịch khám\r\n        </Link>",
+          "line": 36,
+          "endLine": 38,
+          "column": 8,
+          "endColumn": 15,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\Header.tsx:50:12-to-src\\UserPage\\UserInformationPage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\UserInformationPage.tsx",
+      "data": {
+        "viaRoute": "/account",
+        "trigger": {
+          "element": "<Link to=\"/account\" className={getLinkClassName('/account')}>\r\n              Tài khoản \r\n            </Link>",
+          "line": 50,
+          "endLine": 52,
+          "column": 12,
+          "endColumn": 19,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\Header.tsx:55:10-to-src\\UserPage\\LoginPage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\LoginPage.tsx",
+      "data": {
+        "viaRoute": "/login",
+        "trigger": {
+          "element": "<Link\r\n            to=\"/login\"\r\n            className=\"bg-[#1797a6] text-white px-6 py-2 rounded-full font-semibold ml-4 hover:bg-[#127c8a] transition-colors\"\r\n          >\r\n            Đăng nhập\r\n          </Link>",
+          "line": 55,
+          "endLine": 60,
+          "column": 10,
+          "endColumn": 17,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\UserPage\\UserInformationPage.tsx:12:4-to-src\\UserPage\\LoginPage.tsx",
+      "source": "src\\UserPage\\UserInformationPage.tsx",
+      "target": "src\\UserPage\\LoginPage.tsx",
+      "data": {
+        "viaRoute": "/login",
+        "trigger": {
+          "element": "navigate('/login')",
+          "line": 12,
+          "endLine": 12,
+          "column": 4,
+          "endColumn": 22,
+          "sourceFile": "src\\UserPage\\UserInformationPage.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\Header.tsx:27:8-to-src\\UserPage\\HomePage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\HomePage.tsx",
+      "data": {
+        "viaRoute": "/",
+        "trigger": {
+          "element": "<Link to=\"/\" className={getLinkClassName('/')}>\r\n          Trang chủ\r\n        </Link>",
+          "line": 27,
+          "endLine": 29,
+          "column": 8,
+          "endColumn": 15,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\Header.tsx:30:8-to-src\\UserPage\\PetInformationPage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\PetInformationPage.tsx",
+      "data": {
+        "viaRoute": "/pet-info",
+        "trigger": {
+          "element": "<Link to=\"/pet-info\" className={getLinkClassName('/pet-info')}>\r\n          Thông tin thú cưng\r\n        </Link>",
+          "line": 30,
+          "endLine": 32,
+          "column": 8,
+          "endColumn": 15,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\Header.tsx:33:8-to-src\\UserPage\\CareServices_GroomingPage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\CareServices_GroomingPage.tsx",
+      "data": {
+        "viaRoute": "/services",
+        "trigger": {
+          "element": "<Link to=\"/services\" className={getLinkClassName('/services')}>\r\n          Dịch vụ chăm sóc\r\n        </Link>",
+          "line": 33,
+          "endLine": 35,
+          "column": 8,
+          "endColumn": 15,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\Header.tsx:36:8-to-src\\UserPage\\AppointmentPage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\AppointmentPage.tsx",
+      "data": {
+        "viaRoute": "/appointment",
+        "trigger": {
+          "element": "<Link to=\"/appointment\" className={getLinkClassName('/appointment')}>\r\n          Đặt lịch khám\r\n        </Link>",
+          "line": 36,
+          "endLine": 38,
+          "column": 8,
+          "endColumn": 15,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\Header.tsx:50:12-to-src\\UserPage\\UserInformationPage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\UserInformationPage.tsx",
+      "data": {
+        "viaRoute": "/account",
+        "trigger": {
+          "element": "<Link to=\"/account\" className={getLinkClassName('/account')}>\r\n              Tài khoản \r\n            </Link>",
+          "line": 50,
+          "endLine": 52,
+          "column": 12,
+          "endColumn": 19,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\Header.tsx:55:10-to-src\\UserPage\\LoginPage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\LoginPage.tsx",
+      "data": {
+        "viaRoute": "/login",
+        "trigger": {
+          "element": "<Link\r\n            to=\"/login\"\r\n            className=\"bg-[#1797a6] text-white px-6 py-2 rounded-full font-semibold ml-4 hover:bg-[#127c8a] transition-colors\"\r\n          >\r\n            Đăng nhập\r\n          </Link>",
+          "line": 55,
+          "endLine": 60,
+          "column": 10,
+          "endColumn": 17,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\Header.tsx:27:8-to-src\\UserPage\\HomePage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\HomePage.tsx",
+      "data": {
+        "viaRoute": "/",
+        "trigger": {
+          "element": "<Link to=\"/\" className={getLinkClassName('/')}>\r\n          Trang chủ\r\n        </Link>",
+          "line": 27,
+          "endLine": 29,
+          "column": 8,
+          "endColumn": 15,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\Header.tsx:30:8-to-src\\UserPage\\PetInformationPage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\PetInformationPage.tsx",
+      "data": {
+        "viaRoute": "/pet-info",
+        "trigger": {
+          "element": "<Link to=\"/pet-info\" className={getLinkClassName('/pet-info')}>\r\n          Thông tin thú cưng\r\n        </Link>",
+          "line": 30,
+          "endLine": 32,
+          "column": 8,
+          "endColumn": 15,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\Header.tsx:33:8-to-src\\UserPage\\CareServices_GroomingPage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\CareServices_GroomingPage.tsx",
+      "data": {
+        "viaRoute": "/services",
+        "trigger": {
+          "element": "<Link to=\"/services\" className={getLinkClassName('/services')}>\r\n          Dịch vụ chăm sóc\r\n        </Link>",
+          "line": 33,
+          "endLine": 35,
+          "column": 8,
+          "endColumn": 15,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\Header.tsx:36:8-to-src\\UserPage\\AppointmentPage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\AppointmentPage.tsx",
+      "data": {
+        "viaRoute": "/appointment",
+        "trigger": {
+          "element": "<Link to=\"/appointment\" className={getLinkClassName('/appointment')}>\r\n          Đặt lịch khám\r\n        </Link>",
+          "line": 36,
+          "endLine": 38,
+          "column": 8,
+          "endColumn": 15,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\Header.tsx:50:12-to-src\\UserPage\\UserInformationPage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\UserInformationPage.tsx",
+      "data": {
+        "viaRoute": "/account",
+        "trigger": {
+          "element": "<Link to=\"/account\" className={getLinkClassName('/account')}>\r\n              Tài khoản \r\n            </Link>",
+          "line": 50,
+          "endLine": 52,
+          "column": 12,
+          "endColumn": 19,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\Header.tsx:55:10-to-src\\UserPage\\LoginPage.tsx",
+      "source": "src\\UserPage\\HomePage.tsx",
+      "target": "src\\UserPage\\LoginPage.tsx",
+      "data": {
+        "viaRoute": "/login",
+        "trigger": {
+          "element": "<Link\r\n            to=\"/login\"\r\n            className=\"bg-[#1797a6] text-white px-6 py-2 rounded-full font-semibold ml-4 hover:bg-[#127c8a] transition-colors\"\r\n          >\r\n            Đăng nhập\r\n          </Link>",
+          "line": 55,
+          "endLine": 60,
+          "column": 10,
+          "endColumn": 17,
+          "sourceFile": "src\\components\\Header.tsx"
+        }
+      }
+    }
+  ]
+}
