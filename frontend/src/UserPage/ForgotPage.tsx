@@ -1,7 +1,7 @@
 import React from 'react';
-import { BrowserRouter as Router, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-function ForgotPasswordPage() {
+export default function ForgotPage() {
   const navigate = useNavigate();
 
   return (
@@ -58,18 +58,3 @@ function ForgotPasswordPage() {
     </div>
   );
 }
-
-export default function ForgotPasswordPageWithRouter() {
-  return (
-    <Router>
-      <ForgotPasswordPage />
-    </Router>
-  );
-}
-
-/*
-Fix notes:
-- Đặt ForgotPasswordPage vào trong BrowserRouter để hook useNavigate hoạt động mà không lỗi.
-- Export component bọc sẵn Router: ForgotPasswordPageWithRouter.
-- Khi import vào app, chỉ cần dùng ForgotPasswordPageWithRouter.
-*/

@@ -68,8 +68,18 @@ export default function CareServicesPage() {
         </div>
       </section>
 
+      {/* View Booked Services Button */}
+      <div className="flex justify-center mt-32 mb-16">
+        <button
+          onClick={() => navigate('/services/booked')}
+          className="bg-[#1797a6] text-white px-12 py-3 rounded-full text-lg font-semibold shadow-lg hover:bg-[#127c8a] transition-all hover:scale-105"
+        >
+          Xem các dịch vụ đã đặt
+        </button>
+      </div>
+
       {/* Services */}
-      <section className="pt-32 pb-12 bg-white">
+      <section className="pb-12 bg-white">
         <h2 className="text-3xl font-bold text-center mb-10">Dịch vụ của chúng tôi</h2>
         <div className="flex flex-wrap justify-center gap-8">
           {/* Service Card - Tắm cho Pet */}

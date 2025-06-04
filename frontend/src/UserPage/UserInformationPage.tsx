@@ -1,16 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import TopBar from '../components/TopBar';
 import Footer from '../components/Footer';
 import { logout } from '../utils/auth';
+import UserInformationForm from '../Form/UserInformationForm';
 
 export default function UserInformationPage() {
   const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
+  const [avatarImage, setAvatarImage] = useState<string | null>(null);
 
   const handleLogout = () => {
     logout(); // Xóa trạng thái đăng nhập
     navigate('/login'); // Chuyển về trang đăng nhập
+  };
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setAvatarImage(imageUrl);
+    }
   };
 
   return (
@@ -66,7 +77,43 @@ export default function UserInformationPage() {
           {/* Right column */}
           <div>
             <label className="block font-medium mb-1">Ảnh đại diện</label>
-            <textarea className="w-full border rounded px-3 py-2 h-[180px]" />
+            <div className="border rounded-lg p-4 bg-gray-50 min-h-[180px] flex flex-col items-center justify-center">
+              {avatarImage ? (
+                <div className="relative">
+                  <img 
+                    src={avatarImage} 
+                    alt="Avatar preview" 
+                    className="w-32 h-32 object-cover rounded-full border-2 border-[#7bb12b]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setAvatarImage(null)}
+                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm"
+                  >
+                    ×
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleAvatarChange}
+                    className="hidden"
+                    id="avatar-image"
+                  />
+                  <label
+                    htmlFor="avatar-image"
+                    className="cursor-pointer flex flex-col items-center"
+                  >
+                    <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center mb-2">
+                      <span className="text-2xl text-gray-500">+</span>
+                    </div>
+                    <span className="text-gray-500">Click để tải ảnh lên</span>
+                  </label>
+                </>
+              )}
+            </div>
           </div>
         </form>
         {/* Table */}
@@ -106,11 +153,28 @@ export default function UserInformationPage() {
           <button 
             type="button" 
             className="bg-[#7bb12b] text-white px-8 py-2 rounded-full font-semibold shadow hover:bg-[#6aa11e] transition"
+            onClick={() => setShowModal(true)}
           >
             Chỉnh sửa thông tin
           </button>
         </div>
       </main>
+
+      {/* Modal Dialog */}
+      {showModal && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={() => setShowModal(false)}
+        >
+          <div 
+            className="bg-white p-6 rounded-2xl w-full max-w-5xl mx-4"
+            onClick={e => e.stopPropagation()}
+          >
+            <UserInformationForm />
+          </div>
+        </div>
+      )}
+
       <Footer />
     </div>
   );

@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import TopBar from '../components/TopBar';
 import Footer from '../components/Footer';
+import PackageCard from '../components/PackageCard';
+import ChoosePetComponent from '../Component/ChoosePetComponent';
 
 // Component PetInfoCard với khung và màu sắc riêng biệt, nhận props cho thông tin
 function PetInfoCard({
@@ -29,11 +31,38 @@ function PetInfoCard({
 
 export default function CareServices_PetBoardingPage() {
   const navigate = useNavigate();
+  const [showPetSelector, setShowPetSelector] = useState(false);
+  const [selectedPet, setSelectedPet] = useState<any>(null);
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
+  const [totalPrice, setTotalPrice] = useState<number>(0);
+
+  const boardingPackage = {
+    title: "Dịch vụ giữ Pet",
+    description: "Chăm sóc thú cưng của bạn khi bạn đi xa",
+    price: "$10/ngày",
+    features: [
+      "Chăm thú cưng tử tế",
+      "Chăm sóc chu đáo",
+      "Phòng riêng thoải mái",
+      "Thức ăn đầy đủ"
+    ],
+    type: "Pet Care" as const // Fix the type by adding 'as const'
+  };
+
+  const calculatePrice = (start: string, end: string) => {
+    if (!start || !end) return;
+    const startDateTime = new Date(start);
+    const endDateTime = new Date(end);
+    const days = Math.ceil((endDateTime.getTime() - startDateTime.getTime()) / (1000 * 3600 * 24));
+    const pricePerDay = 10; // $10/ngày
+    setTotalPrice(days * pricePerDay);
+  };
 
   return (
     <div className="font-sans bg-white min-h-screen">
-            <TopBar />
-            <Header />
+      <TopBar />
+      <Header />
 
       {/* Back arrow */}
       <div 
@@ -79,53 +108,14 @@ export default function CareServices_PetBoardingPage() {
         </div>
       </section>
 
-      {/* Pet Boarding Form */}
-      <section className="px-8 py-8">
-        <h2 className="text-3xl font-bold mb-6">Thông tin gửi thú cưng</h2>
-        <div className="bg-[#f5f5f5] border border-gray-400 rounded-xl p-6 max-w-4xl mx-auto">
-          <div className="flex flex-col md:flex-row gap-6">
-            {/* Component PetInfoCard với thông tin giả định */}
-            <PetInfoCard />
-            <div className="flex-1">
-              <div className="flex gap-4 mb-2">
-                <div className="flex-1">
-                  <label className="block text-sm mb-1">Ngày gửi</label>
-                  <input className="w-full border rounded px-2 py-1" />
-                </div>
-                <div className="flex-1">
-                  <label className="block text-sm mb-1">Ngày đón về</label>
-                  <input className="w-full border rounded px-2 py-1" />
-                </div>
-              </div>
-              <div className="mb-2">
-                <label className="block text-sm mb-1">Chọn phòng</label>
-                <input className="w-full border rounded px-2 py-1" />
-              </div>
-              <div className="mb-2">
-                <label className="block text-sm mb-1">Ghi chú khi gửi</label>
-                <textarea className="w-full border rounded px-2 py-1" rows={3} />
-              </div>
-              <div className="flex justify-end">
-                <button className="bg-[#7bb12b] text-white px-6 py-2 rounded-full font-semibold shadow hover:bg-[#6aa11e] transition mt-2">
-                  Chỉnh sửa thông tin
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="flex gap-4 mt-6">
-          <button className="bg-[#7bb12b] text-white px-8 py-2 rounded-full font-semibold shadow hover:bg-[#6aa11e] transition">
-            Thêm thú cưng
-          </button>
-        </div>
-        <div className="flex justify-end mt-8">
-          <span className="text-3xl font-bold mr-2">Tổng :</span>
-          <span className="text-[#1797a6] text-4xl font-bold">$ 220.50</span>
-        </div>
-        <div className="flex justify-center mt-8">
-          <button className="bg-[#1797a6] text-white px-12 py-3 rounded-full font-semibold text-lg shadow hover:bg-[#127c8a] transition">
-            Đặt ngay
-          </button>
+      {/* Package Section */}
+      <section className="px-12 py-8">
+        <h2 className="text-4xl font-bold text-center mb-8 text-[#7bb12b]">Dịch Vụ Trông Giữ</h2>
+        <div className="flex justify-center">
+          <PackageCard
+            {...boardingPackage}
+            onBooking={() => setShowPetSelector(true)}
+          />
         </div>
       </section>
 
@@ -140,6 +130,83 @@ export default function CareServices_PetBoardingPage() {
           ))}
         </div>
       </section>
+
+      {/* Pet Selection Modal with Custom Booking Form */}
+      {showPetSelector && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={() => setShowPetSelector(false)}>
+          <div className="max-w-xl w-full mx-4" onClick={e => e.stopPropagation()}>
+            <ChoosePetComponent 
+              pet={selectedPet}
+              onSelectPet={(pet) => setSelectedPet(pet)}
+            >
+              {/* Booking Form */}
+              <div className="space-y-4 w-full">
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <label className="block text-sm mb-1">Ngày gửi</label>
+                    <input 
+                      type="date" 
+                      className="w-full border rounded px-2 py-1"
+                      value={startDate}
+                      onChange={(e) => {
+                        setStartDate(e.target.value);
+                        calculatePrice(e.target.value, endDate);
+                      }}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-sm mb-1">Ngày đón về</label>
+                    <input 
+                      type="date" 
+                      className="w-full border rounded px-2 py-1"
+                      value={endDate}
+                      onChange={(e) => {
+                        setEndDate(e.target.value);
+                        calculatePrice(startDate, e.target.value);
+                      }}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm mb-1">Chọn Phòng</label>
+                  <select className="w-full border rounded px-2 py-1">
+                    <option value="standard">Phòng A </option>
+                    <option value="vip">Phòng B </option>
+                    <option value="luxury">Phòng C </option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm mb-1">Ghi chú thêm</label>
+                  <textarea
+                    className="w-full border rounded px-2 py-1"
+                    rows={3}
+                    placeholder="Nhập yêu cầu đặc biệt của bạn..."
+                  />
+                </div>
+              </div>
+              {/* Price and Confirm Button */}
+              <div className="flex justify-between items-center mt-8">
+                <div className="text-gray-600">
+                  <span className="font-medium">
+                    Giá dịch vụ: <span className="text-[#1797a6]">$10/ngày</span>
+                  </span>
+                  {totalPrice > 0 && (
+                    <div className="mt-1">
+                      <span className="font-medium">
+                        Tổng tiền: <span className="text-[#ff3c00] text-xl">${totalPrice}</span>
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <button className="bg-[#7bb12b] text-white px-12 py-2.5 rounded-full font-semibold shadow hover:bg-[#6aa11e] transition min-w-[200px]">
+                  Xác nhận đặt lịch
+                </button>
+              </div>
+            </ChoosePetComponent>
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <footer className="bg-[#f5f7f5] px-0 pt-12 pb-0 text-sm mt-16">

@@ -37,5 +37,3 @@ export default function AdminPage() {
     </div>
   );
 }
-
-export default AdminPage;

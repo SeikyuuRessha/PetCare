@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import TopBar from '../components/TopBar';
 import Footer from '../components/Footer';
@@ -7,6 +8,7 @@ import { checkIsLoggedIn } from '../utils/auth';
 
 export default function HomePage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsLoggedIn(checkIsLoggedIn());
@@ -46,7 +48,10 @@ export default function HomePage() {
             Chăm sóc thú cưng của bạn 1 cách tốt nhất, vì sức khỏe của người bạn nhỏ của bạn
           </p>
           {isLoggedIn ? (
-            <button className="bg-[#1797a6] text-white px-6 py-2 sm:px-8 sm:py-3 rounded-full font-semibold text-base sm:text-lg hover:bg-[#127c8a] transition">
+            <button
+              onClick={() => navigate('/appointment')}
+              className="bg-[#1797a6] text-white px-6 py-2 sm:px-8 sm:py-3 rounded-full font-semibold text-base sm:text-lg hover:bg-[#127c8a] transition"
+            >
               Đặt lịch khám ngay
             </button>
           ) : (
@@ -57,9 +62,7 @@ export default function HomePage() {
         </div>
         <div className="flex-1 flex justify-center md:justify-end items-center relative min-h-[200px] sm:min-h-[500px] mt-6 md:mt-0">
           {/* Background Elements */}
-          <div className="absolute inset-0 overflow-hidden">
-            
-          </div>
+          <div className="absolute inset-0 overflow-hidden"></div>
 
           {/* Main Puppy Image */}
           <img
@@ -88,7 +91,6 @@ export default function HomePage() {
         <div className="bg-[#fffbe9] p-4 sm:p-6 rounded-xl flex items-center gap-4 sm:gap-6">
           <div>
             <h3 className="font-bold text-3xl sm:text-4xl mb-2">Chăm sóc thú cưng của bạn</h3>
-            
           </div>
           <img
             src="../public/images/image3.png"

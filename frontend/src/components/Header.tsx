@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { checkIsLoggedIn } from '../utils/auth';
+import Notification from '../Notification/Notification';
 
 interface HeaderProps {
   className?: string;
@@ -8,6 +9,8 @@ interface HeaderProps {
 
 export default function Header({ className = '' }: HeaderProps) {
   const [isLoggedIn, setIsLoggedIn] = useState(() => checkIsLoggedIn());
+  const [showNotification, setShowNotification] = useState(false);
+  const notificationRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
 
   useEffect(() => {
@@ -17,6 +20,17 @@ export default function Header({ className = '' }: HeaderProps) {
 
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
+        setShowNotification(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const getLinkClassName = (path: string) => {
@@ -38,25 +52,41 @@ export default function Header({ className = '' }: HeaderProps) {
         <Link to="/" className={getLinkClassName('/')}>
           Trang chủ
         </Link>
-        <Link to="/pet-info" className={getLinkClassName('/pet-info')}>
-          Thông tin thú cưng
-        </Link>
+        
         <Link to="/services" className={getLinkClassName('/services')}>
           Dịch vụ chăm sóc
         </Link>
-        <Link to="/appointment" className={getLinkClassName('/appointment')}>
-          Đặt lịch khám
-        </Link>
-        <Link to="/payment" className={getLinkClassName('/payment')}>
-          Thanh toán
-        </Link>
+
+        {isLoggedIn && (
+          <>
+            <Link to="/pet-info" className={getLinkClassName('/pet-info')}>
+              Thông tin thú cưng
+            </Link>
+            <Link to="/appointment" className={getLinkClassName('/appointment')}>
+              Đặt lịch khám
+            </Link>
+            <Link to="/payment" className={getLinkClassName('/payment')}>
+              Thanh toán
+            </Link>
+          </>
+        )}
+        
         {isLoggedIn ? (
            <div className="flex items-center gap-4">
-            <img
-              className="w-[50px] h-[50px] object-cover"
-              alt="Notification"
-              src="https://c.animaapp.com/C4UbZLbg/img/image-12@2x.png"
-            />
+            <div className="relative" ref={notificationRef}>
+              <img
+                className="w-[50px] h-[50px] object-cover cursor-pointer"
+                alt="Notification"
+                src="https://c.animaapp.com/C4UbZLbg/img/image-12@2x.png"
+                onClick={() => setShowNotification(!showNotification)}
+              />
+              {/* Notification Dropdown */}
+              {showNotification && (
+                <div className="absolute right-0 top-[60px] z-50">
+                  <Notification />
+                </div>
+              )}
+            </div>
             <Link to="/account" className="hover:opacity-80 transition-opacity">
               <div className="flex flex-col items-center gap-[6.56px]">
                 <img

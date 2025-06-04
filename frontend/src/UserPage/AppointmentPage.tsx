@@ -1,54 +1,58 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '../components/Header';
 import TopBar from '../components/TopBar';
 import Footer from '../components/Footer';
+import AppointmentCard from '../components/AppointmentCard';
+import AppointmentForm from '../Form/AppointmentForm';
 
 export default function AppointmentPage() {
+  const [showForm, setShowForm] = useState(false);
+  const [appointments, setAppointments] = useState(['1']); // Example appointment IDs
+
+  const handleDelete = (id: string) => {
+    setAppointments(appointments.filter(appId => appId !== id));
+  };
+
   return (
     <div className="font-sans bg-white min-h-screen flex flex-col">
       <TopBar />
       <Header />
 
-      {/* Main Content */}
       <main className="flex-1 relative z-10 px-8 pt-10 pb-12 min-h-[calc(100vh-200px)]">
         <h2 className="text-xl font-semibold mb-6">Lịch khám hiện tại</h2>
-        <div className="bg-[#e5e5e5] rounded-2xl px-8 py-6 max-w-3xl mb-8">
-          <div className="flex flex-col md:flex-row md:gap-16 gap-2">
-            <div className="flex-1 space-y-3">
-              <div className="flex items-center">
-                <span className="font-bold text-lg mr-2">Lịch Khám :</span>
-                <span className="font-bold text-lg text-black"></span>
-              </div>
-              <div className="flex items-center">
-                <span className="font-bold text-lg mr-2">Tên chủ nhân :</span>
-                <span className="font-bold text-lg text-black"></span>
-              </div>
-              <div className="flex items-center">
-                <span className="font-bold text-lg mr-2">Trạng Thái :</span>
-                <span className="bg-white border border-[#7bb12b] text-[#7bb12b] font-semibold rounded px-2 py-0.5 ml-2 text-base">Thành công</span>
-              </div>
-            </div>
-            <div className="flex-1 space-y-3">
-              <div className="flex items-center">
-                <span className="font-bold text-lg mr-2">Khung giờ khám :</span>
-                <span className="font-bold text-lg text-black"></span>
-              </div>
-              <div className="flex items-center">
-                <span className="font-bold text-lg mr-2">Tên thú cưng :</span>
-                <span className="font-bold text-lg text-black"></span>
-              </div>
-            </div>
-          </div>
-        </div>
+        
+        {appointments.map(id => (
+          <AppointmentCard 
+            key={id} 
+            onDelete={() => handleDelete(id)} 
+          />
+        ))}
+
         <div className="flex gap-8 mt-4">
-          <button className="bg-[#7bb12b] text-white px-8 py-2 rounded-full font-semibold shadow hover:bg-[#6aa11e] transition">
+          <button 
+            onClick={() => setShowForm(true)}
+            className="bg-[#7bb12b] text-white px-8 py-2 rounded-full font-semibold shadow hover:bg-[#6aa11e] transition"
+          >
             Thêm Lịch Khám
-          </button>
-          <button className="bg-[#7bb12b] text-white px-8 py-2 rounded-full font-semibold shadow hover:bg-[#6aa11e] transition">
-            Xóa Lịch Khám
           </button>
         </div>
       </main>
+
+      {/* Form Modal */}
+      {showForm && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={() => setShowForm(false)}
+        >
+          <div 
+            className="bg-white p-6 rounded-2xl w-full max-w-4xl mx-4"
+            onClick={e => e.stopPropagation()}
+          >
+            <AppointmentForm />
+          </div>
+        </div>
+      )}
+
       <Footer />
     </div>
   );

@@ -1,12 +1,49 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import TopBar from '../components/TopBar';
 import Footer from '../components/Footer';
+import PackageCard from '../components/PackageCard';
+import ChoosePetComponent from '../Component/ChoosePetComponent';
 
 export default function CareServices_PetBathingPage() {
   const navigate = useNavigate();
+  const [showPetSelector, setShowPetSelector] = useState(false);
+  const [selectedPet, setSelectedPet] = useState<any>(null);
   
+  const packages = [
+    {
+      title: "Gói Đồng",
+      description: "Gói rẻ nhất phúc lợi vẫn đầy đủ",
+      price: "$50",
+      features: [
+        "Tắm rửa sạch sẽ.",
+        "Sấy tạo kiểu lông sành điệu."
+      ]
+    },
+    {
+      title: "Gói Bạc",
+      description: "Dịch vụ tắm trọn thêm nhiều ưu đãi",
+      price: "$450",
+      features: [
+        "Tắm rửa sạch sẽ.",
+        "Sấy tạo kiểu lông sành điệu.",
+        "Dịch vụ tư vấn sữa tắm cao cấp."
+      ]
+    },
+    {
+      title: "Gói Vàng",
+      description: "Dịch vụ Vip PRO",
+      price: "$900",
+      features: [
+        "Tắm rửa sạch sẽ.",
+        "Sấy tạo kiểu lông sành điệu.",
+        "Dịch vụ tư vấn sữa tắm cao cấp.",
+        "Dịch vụ Spa khi tắm cho thú cưng."
+      ]
+    }
+  ];
+
     return (
       <div className="font-sans bg-white min-h-screen">
               <TopBar />
@@ -51,81 +88,14 @@ export default function CareServices_PetBathingPage() {
       <section className="px-12 py-8">
         <h2 className="text-4xl font-bold text-center mb-8 text-[#7bb12b]">Gói Ưu Đãi</h2>
         <div className="flex flex-col md:flex-row justify-center gap-8">
-          {/* Bronze */}
-          <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8 w-[320px] flex flex-col items-center">
-            <span className="text-[#1797a6] text-sm mb-1">Pet Care</span>
-            <h3 className="font-bold text-2xl mb-1">Gói Đồng</h3>
-            <div className="text-gray-500 mb-2 text-sm">Gói rẻ nhất phúc lợi vẫn đầy đủ</div>
-            <div className="text-[#ff3c00] text-2xl font-bold mb-2">$50</div>
-            <div className="w-full border-t border-b border-gray-200 py-2 mb-2 text-center font-semibold">Bao gồm dịch vụ</div>
-            <ul className="mb-8 space-y-2 text-base w-full">
-              <li className="flex items-center text-[#7bb12b]">
-                <span className="mr-2">✔</span>
-                <span className="text-black">Tắm rửa sạch sẽ.</span>
-              </li>
-              <li className="flex items-center text-[#7bb12b]">
-                <span className="mr-2">✔</span>
-                <span className="text-black">Sấy tạo kiểu lông sành điệu.</span>
-              </li>
-            </ul>
-            <button className="bg-[#1797a6] text-white px-8 py-2 rounded font-semibold text-lg shadow hover:bg-[#127c8a] transition mt-auto">
-              Đặt ngay
-            </button>
-          </div>
-          {/* Silver */}
-          <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8 w-[320px] flex flex-col items-center">
-            <span className="text-[#1797a6] text-sm mb-1">Pet Care</span>
-            <h3 className="font-bold text-2xl mb-1">Gói Bạc</h3>
-            <div className="text-gray-500 mb-2 text-sm">Dịch vụ tắm trọn thêm nhiều ưu đãi</div>
-            <div className="text-[#ff3c00] text-2xl font-bold mb-2">$450</div>
-            <div className="w-full border-t border-b border-gray-200 py-2 mb-2 text-center font-semibold">Bao gồm dịch vụ</div>
-            <ul className="mb-8 space-y-2 text-base w-full">
-              <li className="flex items-center text-[#7bb12b]">
-                <span className="mr-2">✔</span>
-                <span className="text-black">Tắm rửa sạch sẽ.</span>
-              </li>
-              <li className="flex items-center text-[#7bb12b]">
-                <span className="mr-2">✔</span>
-                <span className="text-black">Sấy tạo kiểu lông sành điệu.</span>
-              </li>
-              <li className="flex items-center text-[#7bb12b]">
-                <span className="mr-2">✔</span>
-                <span className="text-black">Dịch vụ tư vấn sữa tắm cao cấp.</span>
-              </li>
-            </ul>
-            <button className="bg-[#1797a6] text-white px-8 py-2 rounded font-semibold text-lg shadow hover:bg-[#127c8a] transition mt-auto">
-              Đặt ngay
-            </button>
-          </div>
-          {/* Gold */}
-          <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8 w-[320px] flex flex-col items-center">
-            <span className="text-[#1797a6] text-sm mb-1">Pet Care & Veterinary</span>
-            <h3 className="font-bold text-2xl mb-1">Gói Vàng</h3>
-            <div className="text-gray-500 mb-2 text-sm">Dịch vụ Vip PRO</div>
-            <div className="text-[#ff3c00] text-2xl font-bold mb-2">$900</div>
-            <div className="w-full border-t border-b border-gray-200 py-2 mb-2 text-center font-semibold">Bao gồm dịch vụ</div>
-            <ul className="mb-8 space-y-2 text-base w-full">
-              <li className="flex items-center text-[#7bb12b]">
-                <span className="mr-2">✔</span>
-                <span className="text-black">Tắm rửa sạch sẽ.</span>
-              </li>
-              <li className="flex items-center text-[#7bb12b]">
-                <span className="mr-2">✔</span>
-                <span className="text-black">Sấy tạo kiểu lông sành điệu.</span>
-              </li>
-              <li className="flex items-center text-[#7bb12b]">
-                <span className="mr-2">✔</span>
-                <span className="text-black">Dịch vụ tư vấn sữa tắm cao cấp.</span>
-              </li>
-              <li className="flex items-center text-[#7bb12b]">
-                <span className="mr-2">✔</span>
-                <span className="text-black">Dịch vụ Spa khi tắm cho thú cưng--</span>
-              </li>
-            </ul>
-            <button className="bg-[#1797a6] text-white px-8 py-2 rounded font-semibold text-lg shadow hover:bg-[#127c8a] transition mt-auto">
-              Đặt ngay
-            </button>
-          </div>
+          {packages.map((pkg, index) => (
+            <PackageCard
+              key={index}
+              {...pkg}
+              onBooking={() => setShowPetSelector(true)}
+              type={pkg.title === "Gói Vàng" ? "Pet Care & Veterinary" : "Pet Care"}
+            />
+          ))}
         </div>
       </section>
 
@@ -140,6 +110,24 @@ export default function CareServices_PetBathingPage() {
           ))}
         </div>
       </section>
+
+      {/* Pet Selection Modal */}
+      {showPetSelector && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={() => setShowPetSelector(false)}
+        >
+          <div 
+            className="max-w-xl w-full mx-4"
+            onClick={e => e.stopPropagation()}
+          >
+            <ChoosePetComponent 
+              pet={selectedPet}
+              onSelectPet={(pet) => setSelectedPet(pet)}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <footer className="bg-[#f5f7f5] px-0 pt-12 pb-0 text-sm mt-16">

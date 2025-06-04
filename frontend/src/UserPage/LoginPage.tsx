@@ -64,8 +64,9 @@ export default function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
             className="w-full mb-1 px-4 py-2 border border-purple-400 rounded focus:outline-none"
           />
-          {/* Link quên mật khẩu */}
-          <a href="#" className="self-end mb-4 text-xs text-red-500">Quên mật khẩu</a>
+          <Link to="/forgot-password" className="self-end mb-4 text-xs text-red-500">
+            Quên mật khẩu
+          </Link>
 
           {/* Nút đăng nhập */}
           <button 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function RegisterPage() {
   const navigate = useNavigate();
@@ -64,13 +64,7 @@ function RegisterPage() {
   );
 }
 
-export default function RegisterPageWithRouter() {
-  return (
-    <Router>
-      <RegisterPage />
-    </Router>
-  );
-}
+export default RegisterPage;
 
 /*
 Fix:
