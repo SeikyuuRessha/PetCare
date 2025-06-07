@@ -1,98 +1,286 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# PetCare Backend API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Mô tả
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Backend API cho hệ thống quản lý Pet Care sử dụng NestJS, Prisma, và ZenStack để auto-generate API với access control.
 
-## Description
+## Công nghệ sử dụng
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **NestJS**: Framework Node.js
+- **Prisma**: ORM cho database
+- **ZenStack**: Auto-generate API với access control
+- **SQL Server**: Database
+- **Swagger**: API Documentation
+- **JWT**: Authentication
 
-## Project setup
+## Cấu trúc Project
 
-```bash
-$ npm install
+```
+src/
+├── app.module.ts              # Root module
+├── main.ts                    # Entry point
+├── auth/                      # Authentication module
+├── users/                     # User management
+├── pets/                      # Pet management
+├── appointments/              # Appointment management
+├── medical-records/           # Medical record management
+├── services/                  # Service management
+├── service-bookings/          # Service booking management
+├── rooms/                     # Room management
+├── boarding-reservations/     # Boarding reservation management
+├── notifications/             # Notification management
+├── medicines/                 # Medicine management
+├── prescriptions/             # Prescription management
+├── payments/                  # Payment management
+└── zenstack/                  # ZenStack integration
 ```
 
-## Compile and run the project
+## Cài đặt
+
+### 1. Cài đặt dependencies
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
 ```
 
-## Run tests
+### 2. Cấu hình database
+
+- Tạo database SQL Server với tên `PetCare`
+- Cập nhật connection string trong file `.env`
+
+### 3. Generate Prisma và ZenStack
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm run zenstack:generate
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### 4. Migrate database (nếu cần)
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npx prisma db push
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## Chạy ứng dụng
 
-## Resources
+### Development mode
 
-Check out a few resources that may come in handy when working with NestJS:
+```bash
+npm run start:dev
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### Production mode
 
-## Support
+```bash
+npm run build
+npm run start:prod
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## API Endpoints
 
-## Stay in touch
+### Auto-generated ZenStack API
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- **Base URL**: `http://localhost:8080/api`
+- **Methods**: GET, POST, PUT, DELETE
+- **Models**: User, Pet, Appointment, MedicalRecord, Service, ServiceOption, ServiceBooking, Room, BoardingReservation, Notification, Medicine, MedicationPackage, Prescription, Payment
+
+### ZenStack API Examples
+
+#### 1. Lấy danh sách users
+
+```http
+GET /api/User
+```
+
+#### 2. Tạo user mới
+
+```http
+POST /api/User
+Content-Type: application/json
+
+{
+  "userId": "user1",
+  "username": "john_doe",
+  "email": "john@example.com",
+  "fullName": "John Doe",
+  "password": "hashed_password",
+  "phone": "0123456789",
+  "address": "123 Main St",
+  "role": "USER"
+}
+```
+
+#### 3. Lấy thông tin user theo ID
+
+```http
+GET /api/User/user1
+```
+
+#### 4. Cập nhật user
+
+```http
+PUT /api/User/user1
+Content-Type: application/json
+
+{
+  "fullName": "John Smith",
+  "phone": "0987654321"
+}
+```
+
+#### 5. Tạo pet mới
+
+```http
+POST /api/Pet
+Content-Type: application/json
+
+{
+  "petId": "pet1",
+  "name": "Buddy",
+  "gender": "Male",
+  "species": "Dog",
+  "breed": "Golden Retriever",
+  "color": "Golden",
+  "ownerId": "user1"
+}
+```
+
+#### 6. Tạo appointment
+
+```http
+POST /api/Appointment
+Content-Type: application/json
+
+{
+  "appointmentId": "apt1",
+  "petId": "pet1",
+  "appointmentDate": "2025-06-10T10:00:00Z",
+  "symptoms": "Cough and fever"
+}
+```
+
+#### 7. Lấy appointments với include relations
+
+```http
+GET /api/Appointment?include={"pet":true,"medicalRecord":true}
+```
+
+#### 8. Filtering và sorting
+
+```http
+GET /api/Pet?where={"species":"Dog"}&orderBy={"name":"asc"}
+```
+
+## Access Control
+
+ZenStack tự động áp dụng access control rules được định nghĩa trong `schema.zmodel`:
+
+### User Access
+
+- Users chỉ có thể truy cập data của chính họ
+- Admin/Employee/Doctor có quyền đọc thông tin users
+
+### Pet Access
+
+- Chủ pet có toàn quyền với pet của mình
+- Staff có quyền đọc/cập nhật thông tin pets
+
+### Appointment Access
+
+- Chủ pet quản lý appointments của pet
+- Staff có toàn quyền quản lý appointments
+
+### Medical Record Access
+
+- Bác sĩ tạo record có toàn quyền
+- Chủ pet có quyền đọc medical records
+- Admin có toàn quyền
+
+## API Documentation
+
+Swagger documentation có sẵn tại: `http://localhost:8080/api/docs`
+
+## Environment Variables
+
+```env
+DATABASE_URL="sqlserver://localhost:1444;username=sa;password=your_password;database=PetCare;encrypt=true;trustServerCertificate=true"
+JWT_ACCESS_SECRET="your_jwt_access_secret"
+JWT_REFRESH_SECRET="your_jwt_refresh_secret"
+JWT_ACCESS_EXPIRESIN="1d"
+JWT_REFRESH_EXPIRESIN="7d"
+PORT=8080
+```
+
+## Scripts
+
+```bash
+# Development
+npm run start:dev           # Chạy dev server với watch mode
+npm run zenstack:dev        # Generate ZenStack + chạy dev server
+
+# Build & Production
+npm run build              # Build project
+npm run start:prod         # Chạy production server
+
+# Code Quality
+npm run lint               # Lint code
+npm run format             # Format code với Prettier
+
+# Testing
+npm run test               # Chạy unit tests
+npm run test:e2e           # Chạy e2e tests
+npm run test:cov           # Chạy tests với coverage
+
+# ZenStack
+npm run zenstack:generate  # Generate Prisma schema và ZenStack APIs
+```
+
+## Database Schema
+
+Project sử dụng các models chính:
+
+- **User**: Quản lý người dùng (USER, EMPLOYEE, DOCTOR, ADMIN)
+- **Pet**: Thông tin thú cưng
+- **Appointment**: Lịch hẹn khám
+- **MedicalRecord**: Hồ sơ bệnh án
+- **Service/ServiceOption**: Dịch vụ và các tùy chọn
+- **ServiceBooking**: Đặt dịch vụ
+- **Room**: Phòng lưu trú
+- **BoardingReservation**: Đặt phòng lưu trú
+- **Notification**: Thông báo
+- **Medicine/MedicationPackage**: Thuốc và gói thuốc
+- **Prescription**: Đơn thuốc
+- **Payment**: Thanh toán
+
+## Troubleshooting
+
+### Lỗi database connection
+
+- Kiểm tra SQL Server đang chạy
+- Verify connection string trong `.env`
+- Đảm bảo database `PetCare` đã được tạo
+
+### Lỗi ZenStack generate
+
+- Chạy `npm run zenstack:generate` để re-generate
+- Kiểm tra syntax trong `schema.zmodel`
+
+### Lỗi build
+
+- Xóa thư mục `dist` và `node_modules`, sau đó:
+
+````bash
+npm install
+npm run zenstack:generate
+npm run build
+```## Contributing
+
+1. Fork project
+2. Tạo feature branch: `git checkout -b feature/amazing-feature`
+3. Commit changes: `git commit -m 'Add amazing feature'`
+4. Push branch: `git push origin feature/amazing-feature`
+5. Tạo Pull Request
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is licensed under the MIT License.
+````

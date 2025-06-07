@@ -1,35 +1,49 @@
-import { Module } from "@nestjs/common";
-import { UsersModule } from "./users/users.module";
-import { PetsModule } from "./pets/pets.module";
-import { AppointmentsModule } from "./appointments/appointments.module";
-import { MedicalRecordsModule } from "./medical-records/medical-records.module";
-import { ServicesModule } from "./services/services.module";
-import { ServiceBookingsModule } from "./service-bookings/service-bookings.module";
-import { RoomsModule } from "./rooms/rooms.module";
-import { BoardingReservationsModule } from "./boarding-reservations/boarding-reservations.module";
-import { NotificationsModule } from "./notifications/notifications.module";
-import { MedicinesModule } from "./medicines/medicines.module";
-import { PrescriptionsModule } from "./prescriptions/prescriptions.module";
-import { PaymentsModule } from "./payments/payments.module";
+import { Module, NestModule, MiddlewareConsumer, RequestMethod } from "@nestjs/common";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { REQUEST } from "@nestjs/core";
+import { ZenStackModule } from "@zenstackhq/server/nestjs";
 import { AuthModule } from "./auth/auth.module";
 import { CommonModule } from "./common/common.module";
+import { PrismaService } from "./common/prisma.service";
+import { CrudMiddleware } from "./middleware/zenstack.middleware";
+import { AuthMiddleware } from "./middleware/auth.middleware";
+import { JwtModule } from "@nestjs/jwt";
+import type { Request } from "express";
 
 @Module({
     imports: [
-        UsersModule,
-        PetsModule,
-        AppointmentsModule,
-        MedicalRecordsModule,
-        ServicesModule,
-        ServiceBookingsModule,
-        RoomsModule,
-        BoardingReservationsModule,
-        NotificationsModule,
-        MedicinesModule,
-        PrescriptionsModule,
-        PaymentsModule,
+        ConfigModule.forRoot({ isGlobal: true }),
+        JwtModule.registerAsync({
+            imports: [ConfigModule],
+            useFactory: async (configService: ConfigService) => ({
+                secret: configService.get<string>("JWT_ACCESS_SECRET"),
+                signOptions: {
+                    expiresIn: configService.get<string>("JWT_ACCESS_EXPIRESIN"),
+                },
+            }),
+            inject: [ConfigService],
+        }),
         AuthModule,
         CommonModule,
+        ZenStackModule.registerAsync({
+            useFactory: (request: Request, prisma: PrismaService) => {
+                return {
+                    getEnhancedPrisma: () => prisma,
+                };
+            },
+            inject: [REQUEST, PrismaService],
+            extraProviders: [PrismaService],
+            global: true,
+        }),
     ],
+    providers: [PrismaService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+    configure(consumer: MiddlewareConsumer) {
+        // Apply authentication middleware first to populate req.user
+        consumer.apply(AuthMiddleware).forRoutes("/auth");
+
+        // Apply ZenStack CRUD middleware to / routes for REST API
+        consumer.apply(CrudMiddleware).exclude("auth/(.*)").forRoutes("/");
+    }
+}

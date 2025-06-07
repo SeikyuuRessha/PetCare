@@ -1,34 +1,40 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from "@nestjs/common";
-import { AuthService } from "./auth.service";
-import { CreateAuthDto } from "./dto/create-auth.dto";
-import { UpdateAuthDto } from "./dto/update-auth.dto";
+import { Controller, Get, Post, Body, UseGuards } from "@nestjs/common";
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from "@nestjs/swagger";
+import { AuthService, LoginDto, RegisterDto } from "./auth.service";
+import { Public } from "./decorators/auth.decorators";
+import { CurrentUser } from "./decorators/current-user.decorator";
+import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 
 @Controller("auth")
+@ApiTags("Authentication")
 export class AuthController {
     constructor(private readonly authService: AuthService) {}
 
-    @Post()
-    create(@Body() createAuthDto: CreateAuthDto) {
-        return this.authService.create(createAuthDto);
+    @Post("register")
+    @Public()
+    @ApiOperation({ summary: "Register new user" })
+    @ApiResponse({ status: 201, description: "User registered successfully" })
+    @ApiResponse({ status: 409, description: "User already exists" })
+    async register(@Body() registerDto: RegisterDto) {
+        return this.authService.register(registerDto);
     }
 
-    @Get()
-    findAll() {
-        return this.authService.findAll();
+    @Post("login")
+    @Public()
+    @ApiOperation({ summary: "User login" })
+    @ApiResponse({ status: 200, description: "Login successful" })
+    @ApiResponse({ status: 401, description: "Invalid credentials" })
+    async login(@Body() loginDto: LoginDto) {
+        return this.authService.login(loginDto);
     }
 
-    @Get(":id")
-    findOne(@Param("id") id: string) {
-        return this.authService.findOne(+id);
-    }
-
-    @Patch(":id")
-    update(@Param("id") id: string, @Body() updateAuthDto: UpdateAuthDto) {
-        return this.authService.update(+id, updateAuthDto);
-    }
-
-    @Delete(":id")
-    remove(@Param("id") id: string) {
-        return this.authService.remove(+id);
+    @Get("profile")
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth("JWT-auth")
+    @ApiOperation({ summary: "Get current user profile" })
+    @ApiResponse({ status: 200, description: "Profile retrieved successfully" })
+    @ApiResponse({ status: 401, description: "Unauthorized" })
+    async getProfile(@CurrentUser() user: any) {
+        return this.authService.getProfile(user.userId);
     }
 }
