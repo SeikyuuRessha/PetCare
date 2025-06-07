@@ -41,7 +41,7 @@ import type { Request } from "express";
 export class AppModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {
         // Apply authentication middleware first to populate req.user
-        consumer.apply(AuthMiddleware).forRoutes("/auth");
+        consumer.apply(AuthMiddleware).forRoutes("/");
 
         // Apply ZenStack CRUD middleware to / routes for REST API
         consumer.apply(CrudMiddleware).exclude("auth/(.*)").forRoutes("/");

@@ -3,6 +3,8 @@ import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import * as bcrypt from "bcryptjs";
 import { PrismaService } from "../common/prisma.service";
+import { AppException } from "../common/exception/app-exception";
+import { ExceptionCode } from "../common/exception/exception-code";
 import { v4 as uuidv4 } from "uuid";
 
 export interface LoginDto {
@@ -35,21 +37,26 @@ export class AuthService {
                 OR: [{ username: registerDto.username }, { email: registerDto.email }],
             },
         });
-
         if (existingUser) {
-            throw new ConflictException("User already exists");
+            if (existingUser.username === registerDto.username) {
+                throw new AppException(ExceptionCode.USER_ALREADY_EXISTS);
+            }
+            if (existingUser.email === registerDto.email) {
+                throw new AppException(ExceptionCode.EMAIL_ALREADY_EXISTS);
+            }
         }
 
         // Hash password
-        const hashedPassword = await bcrypt.hash(registerDto.password, 12);
-
-        // Create user
+        const hashedPassword = await bcrypt.hash(registerDto.password, 15); // Create user
         const user = await this.prismaService.user.create({
             data: {
-                ...registerDto,
+                username: registerDto.username,
+                email: registerDto.email,
+                fullName: registerDto.fullName,
                 password: hashedPassword,
+                phone: registerDto.phone,
+                address: registerDto.address,
                 role: registerDto.role || "USER",
-                userId: uuidv4(), // Generate a new UUID for userId
             },
             select: {
                 userId: true,
@@ -74,7 +81,6 @@ export class AuthService {
         return {
             user,
             accessToken,
-            tokenType: "Bearer",
         };
     }
 
@@ -83,15 +89,14 @@ export class AuthService {
         const user = await this.prismaService.user.findUnique({
             where: { username: loginDto.username },
         });
-
         if (!user) {
-            throw new UnauthorizedException("Invalid credentials");
+            throw new AppException(ExceptionCode.USER_NOT_FOUND);
         }
 
         // Verify password
         const isPasswordValid = await bcrypt.compare(loginDto.password, user.password);
         if (!isPasswordValid) {
-            throw new UnauthorizedException("Invalid credentials");
+            throw new AppException(ExceptionCode.INVALID_PASSWORD);
         }
 
         // Generate JWT
@@ -133,8 +138,11 @@ export class AuthService {
 
         return user;
     }
-
     async getProfile(userId: string) {
-        return this.validateUser(userId);
+        const user = await this.validateUser(userId);
+        if (!user) {
+            throw new AppException(ExceptionCode.USER_NOT_FOUND);
+        }
+        return user;
     }
 }

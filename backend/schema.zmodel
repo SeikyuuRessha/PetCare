@@ -14,12 +14,12 @@ plugin openapi {
 
 // User model
 model User {
-    userId            String             @id @db.VarChar(50)
+    userId            String             @id @default(uuid()) @db.VarChar(50)
     username          String             @unique @db.VarChar(50)
     email             String?            @unique @db.VarChar(100)
     fullName          String             @db.NVarChar(50)
     password          String             @db.VarChar(255)
-    phone             String?            @unique @db.VarChar(20)
+    phone             String?            @db.VarChar(20)
     address           String?            @db.VarChar(200)
     role              String             @default("USER") @db.VarChar(10) // USER, EMPLOYEE, DOCTOR, ADMIN
 
@@ -39,7 +39,7 @@ model User {
 
 // Pet model
 model Pet {
-    petId                String                @id @db.VarChar(50)
+    petId                String                @id @default(uuid()) @db.VarChar(50)
     name                 String                @db.NVarChar(50)
     gender               String?               @db.VarChar(10)
     species              String?               @db.NVarChar(50)
@@ -65,7 +65,7 @@ model Pet {
 
 // Appointment model
 model Appointment {
-    appointmentId   String         @id @db.VarChar(50)
+    appointmentId   String         @id @default(uuid()) @db.VarChar(50)
     petId           String         @db.VarChar(50)
     appointmentDate DateTime       @db.DateTime
     status          String         @default("PENDING") @db.VarChar(10) // PENDING, CONFIRMED, COMPLETED, CANCELLED
@@ -85,7 +85,7 @@ model Appointment {
 
 // Medical Record model
 model MedicalRecord {
-    recordId        String        @id @db.VarChar(50)
+    recordId        String        @id @default(uuid()) @db.VarChar(50)
     doctorId        String        @db.VarChar(50)
     appointmentId   String?       @unique @db.VarChar(50)
     diagnosis       String?       @db.NVarChar(500)
@@ -106,7 +106,7 @@ model MedicalRecord {
 
 // Service model
 model Service {
-    serviceId      String          @id @db.VarChar(50)
+    serviceId      String          @id @default(uuid()) @db.VarChar(50)
     serviceName    String          @db.NVarChar(100)
     description    String?         @db.NVarChar(500)
 
@@ -122,7 +122,7 @@ model Service {
 
 // Service Option model
 model ServiceOption {
-    optionId        String           @id @db.VarChar(50)
+    optionId        String           @id @default(uuid()) @db.VarChar(50)
     optionName      String           @db.NVarChar(100)
     price           Decimal?         @db.Decimal(10, 2)
     description     String?          @db.NVarChar(500)
@@ -141,7 +141,7 @@ model ServiceOption {
 
 // Service Booking model
 model ServiceBooking {
-    bookingId           String        @id @db.VarChar(50)
+    bookingId           String        @id @default(uuid()) @db.VarChar(50)
     petId               String        @db.VarChar(50)
     serviceOptionId     String        @db.VarChar(50)
     bookingDate         DateTime      @db.DateTime
@@ -163,7 +163,7 @@ model ServiceBooking {
 
 // Room model
 model Room {
-    roomId               String                @id @db.VarChar(50)
+    roomId               String                @id @default(uuid()) @db.VarChar(50)
     roomNumber           Int                   @unique
     capacity             Int
     status               String                @default("AVAILABLE") @db.VarChar(20) // AVAILABLE, OCCUPIED, MAINTENANCE
@@ -182,7 +182,7 @@ model Room {
 
 // Boarding Reservation model
 model BoardingReservation {
-    reservationId String    @id @db.VarChar(50)
+    reservationId String    @id @default(uuid()) @db.VarChar(50)
     petId         String    @db.VarChar(50)
     roomId        String    @db.VarChar(50)
     checkInDate   DateTime  @db.Date
@@ -204,7 +204,7 @@ model BoardingReservation {
 
 // Notification model
 model Notification {
-    notificationId    String             @id @db.VarChar(50)
+    notificationId    String             @id @default(uuid()) @db.VarChar(50)
     title             String?            @db.NVarChar(100)
     message           String?            @db.NVarChar(1000)
     type              String             @default("INFO") @db.VarChar(20) // REMINDER, ALERT, INFO
@@ -239,7 +239,7 @@ model NotificationUser {
 
 // Medicine model
 model Medicine {
-    medicineId         String              @id @db.VarChar(50)
+    medicineId         String              @id @default(uuid()) @db.VarChar(50)
     name               String              @db.NVarChar(100)
     unit               String?             @db.NVarChar(20)
     concentration      String?             @db.NVarChar(50)
@@ -256,7 +256,7 @@ model Medicine {
 
 // Medication Package model
 model MedicationPackage {
-    packageId           String               @id @db.VarChar(50)
+    packageId           String               @id @default(uuid()) @db.VarChar(50)
     medicineId          String               @db.VarChar(50)
     quantity            Int
     instruction         String?              @db.NVarChar(500)
@@ -274,7 +274,7 @@ model MedicationPackage {
 
 // Prescription model
 model Prescription {
-    prescriptionId      String               @id @db.VarChar(50)
+    prescriptionId      String               @id @default(uuid()) @db.VarChar(50)
     recordId            String               @unique @db.VarChar(50)
 
     // Relations
@@ -309,7 +309,7 @@ model PrescriptionDetail {
 
 // Payment model
 model Payment {
-    paymentId           String               @id @db.VarChar(50)
+    paymentId           String               @id @default(uuid()) @db.VarChar(50)
     userId              String               @db.VarChar(50)
     paymentDate         DateTime?            @default(now()) @db.DateTime
     totalAmount         Decimal?             @db.Decimal(10, 2)
@@ -326,5 +326,3 @@ model Payment {
 
     @@map("Payment")
 }
-
-// End of schema

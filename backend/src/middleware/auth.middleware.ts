@@ -32,6 +32,9 @@ export class AuthMiddleware implements NestMiddleware {
                         secret: this.configService.get<string>("JWT_ACCESS_SECRET"),
                     });
 
+                    // Log the JWT payload for debugging
+                    console.log("🔑 JWT Payload:", payload);
+
                     // Set user context for ZenStack
                     req.user = {
                         userId: payload.userId,

@@ -4,6 +4,9 @@ import { AppModule } from "./app.module";
 import { ValidationPipe } from "@nestjs/common";
 import { JwtAuthGuard } from "./auth/guards/jwt-auth.guard";
 import { RolesGuard } from "./auth/guards/roles.guard";
+import { GlobalExceptionFilter } from "./common/filters/global-exception.filter";
+import { CustomValidationPipe } from "./common/pipes/custom-validation.pipe";
+import { ResponseInterceptor } from "./common/interceptors/response.interceptor";
 import * as dotenv from "dotenv";
 
 // @ts-ignore
@@ -17,16 +20,15 @@ async function bootstrap() {
     dotenv.config();
 
     // Enable CORS
-    app.enableCors();
+    app.enableCors(); // Set global prefix for API routes
+    app.setGlobalPrefix("api"); // Global exception filter
+    app.useGlobalFilters(new GlobalExceptionFilter());
 
-    // Set global prefix for API routes
-    app.setGlobalPrefix("api"); // Global validation pipe
-    app.useGlobalPipes(
-        new ValidationPipe({
-            whitelist: true,
-            transform: true,
-        })
-    );
+    // Global validation pipe
+    app.useGlobalPipes(new CustomValidationPipe());
+
+    // Global response interceptor
+    app.useGlobalInterceptors(new ResponseInterceptor());
 
     // Apply global authentication guard
     const reflector = app.get(Reflector);

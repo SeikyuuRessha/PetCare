@@ -99,4 +99,3 @@ out/
 /backend/package-lock.json
 /backend/dist
 /backend/generated
-/backend/prisma
