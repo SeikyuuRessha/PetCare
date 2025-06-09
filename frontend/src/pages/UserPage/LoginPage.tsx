@@ -13,7 +13,7 @@ export default function LoginPage() {
 
   const handleLogin = () => {
     login(email, password);
-    navigate('/');
+    navigate('/home'); // Change this from '/' to '/home'
   };
 
   return (
@@ -23,7 +23,7 @@ export default function LoginPage() {
         {/* Khung chứa hình ảnh chó */}
         <div className="bg-white rounded-3xl overflow-hidden p-4">
           <img
-            src="https://i.imgur.com/5Z6L8gB.jpg" // Đường dẫn ảnh chó (cần thay bằng link thực tế)
+            src="../public/images/image1.png" // Đường dẫn ảnh chó (cần thay bằng link thực tế)
             alt="Happy Dog"
             className="w-80 h-80 object-cover rounded-3xl"
           />
@@ -41,7 +41,7 @@ export default function LoginPage() {
           {/* Logo và tiêu đề */}
           <div className="flex items-center mb-6">
             <img
-              src="https://i.imgur.com/HWm9hA9.png" // Đường dẫn logo (cần thay bằng link thực tế)
+              src="../public/images/Group.svg" // Đường dẫn logo (cần thay bằng link thực tế)
               alt="PetHealthy Logo"
               className="w-12 h-12 mr-2"
             />

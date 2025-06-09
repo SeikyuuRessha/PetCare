@@ -55,12 +55,15 @@ export default function BookedServiceCard({
             </div>
           </div>
 
-          {/* Pet Info */}
+          {/* Pet Info with updated image path */}
           <div className="bg-[#f8faf7] rounded-lg p-4">
             <div className="flex items-center gap-4">
               <div className="w-[100px] shrink-0">
                 <PetComponent 
-                  pet={pet}
+                  pet={{
+                    ...pet,
+                    imageUrl: `../public/images/image1.png`
+                  }}
                   onViewDetails={() => {}}
                   hideViewDetails={true}
                 />

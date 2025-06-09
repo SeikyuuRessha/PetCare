@@ -180,7 +180,13 @@ export default function Doctor_PetInformationForm({
               {/* Right column */}
               <div className="flex flex-col h-full">
                 <label className="block text-sm mb-1">Ảnh thú cưng</label>
-                <textarea className="w-full border rounded px-3 py-2 min-h-[200px] flex-1" disabled />
+                <div className="w-full border rounded px-3 py-2 min-h-[200px] flex-1">
+                  <img 
+                    src="../public/images/image3.png" 
+                    alt="Pet" 
+                    className="w-full h-full object-cover rounded"
+                  />
+                </div>
                 <div className="flex justify-end mt-8">
                   <button
                     type="button"

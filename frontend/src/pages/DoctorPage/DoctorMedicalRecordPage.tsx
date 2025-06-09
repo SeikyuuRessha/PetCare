@@ -14,7 +14,7 @@ export default function DoctorMedicalRecordPage() {
     owner: 'Nguyễn Văn A',
     species: 'Chó',
     breed: 'Shiba',
-    imageUrl: '/pet-avatar.png'
+    imageUrl: '../public/images/image1.png'
   };
 
   return (

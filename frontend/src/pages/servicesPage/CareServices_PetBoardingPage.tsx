@@ -12,7 +12,7 @@ function PetInfoCard({
   ownerName = "Nguyễn Văn A",
   species = "Chó",
   breed = "Shiba",
-  imageUrl = "/doctor-doraemon.jpg"
+  imageUrl = "../public/images/image1.png"
 }) {
   return (
     <div className="flex items-center gap-6 mb-4 bg-[#eaf1ef] border-2 border-[#7bb12b] rounded-xl px-6 py-4 shadow">
@@ -40,7 +40,7 @@ export default function CareServices_PetBoardingPage() {
   const boardingPackage = {
     title: "Dịch vụ giữ Pet",
     description: "Chăm sóc thú cưng của bạn khi bạn đi xa",
-    price: "$10/ngày",
+    price: "200.000đ/ngày",
     features: [
       "Chăm thú cưng tử tế",
       "Chăm sóc chu đáo",
@@ -55,7 +55,7 @@ export default function CareServices_PetBoardingPage() {
     const startDateTime = new Date(start);
     const endDateTime = new Date(end);
     const days = Math.ceil((endDateTime.getTime() - startDateTime.getTime()) / (1000 * 3600 * 24));
-    const pricePerDay = 10; // $10/ngày
+    const pricePerDay = 200000; // 200.000đ/ngày
     setTotalPrice(days * pricePerDay);
   };
 
@@ -101,9 +101,21 @@ export default function CareServices_PetBoardingPage() {
         </div>
         <div className="flex-1 flex justify-end items-center gap-4">
           <div className="relative w-[340px] h-[220px]">
-            <div className="absolute left-24 top-0 w-[140px] h-[100px] bg-gray-300 rounded-lg" />
-            <div className="absolute left-12 top-8 w-[180px] h-[140px] bg-gray-400 rounded-lg" />
-            <div className="absolute left-0 top-16 w-[180px] h-[140px] bg-gray-500 rounded-lg" />
+            <img 
+              src="../public/images/board.jpg" 
+              alt="Boarding 1"
+              className="absolute left-24 top-0 w-[140px] h-[100px] object-cover rounded-lg"
+            />
+            <img 
+              src="../public/images/board.jpg" 
+              alt="Boarding 2"
+              className="absolute left-12 top-8 w-[180px] h-[140px] object-cover rounded-lg"
+            />
+            <img 
+              src="../public/images/board.jpg" 
+              alt="Boarding 3"
+              className="absolute left-0 top-16 w-[180px] h-[140px] object-cover rounded-lg"
+            />
           </div>
         </div>
       </section>
@@ -124,7 +136,12 @@ export default function CareServices_PetBoardingPage() {
         <h2 className="text-3xl font-bold mb-8 text-[#7bb12b]"><span className="text-black">#</span>Instagram</h2>
         <div className="flex gap-8 justify-center">
           {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="relative w-40 h-40 bg-gray-300 rounded-lg flex items-end justify-center overflow-hidden border-b-4 border-[#1797a6]">
+            <div key={i} className="relative w-40 h-40 rounded-lg overflow-hidden border-b-4 border-[#1797a6]">
+              <img 
+                src={`../public/images/staff${i}.jpg`}
+                alt={`Instagram post ${i}`}
+                className="w-full h-full object-cover"
+              />
               <span className="absolute left-2 top-2 text-xs text-white">Thú cưng cùng chủ nhân đáng yêu!</span>
             </div>
           ))}
@@ -189,12 +206,12 @@ export default function CareServices_PetBoardingPage() {
               <div className="flex justify-between items-center mt-8">
                 <div className="text-gray-600">
                   <span className="font-medium">
-                    Giá dịch vụ: <span className="text-[#1797a6]">$10/ngày</span>
+                    Giá dịch vụ: <span className="text-[#1797a6]">200.000đ/ngày</span>
                   </span>
                   {totalPrice > 0 && (
                     <div className="mt-1">
                       <span className="font-medium">
-                        Tổng tiền: <span className="text-[#ff3c00] text-xl">${totalPrice}</span>
+                        Tổng tiền: <span className="text-[#ff3c00] text-xl">{totalPrice.toLocaleString()}đ</span>
                       </span>
                     </div>
                   )}
@@ -213,14 +230,14 @@ export default function CareServices_PetBoardingPage() {
         <div className="flex flex-col md:flex-row justify-between max-w-6xl mx-auto px-12">
           <div className="mb-8 md:mb-0">
             <div className="flex items-center space-x-2 mb-2">
-              <img src="/logo.png" alt="PetHealthy Logo" className="h-8" />
+              <img src="../public/images/logo.png" alt="PetHealthy Logo" className="h-8" />
               <span className="font-bold text-[#7bb12b] text-2xl">PETHEALTHY</span>
             </div>
             <p className="text-gray-600 mt-2 max-w-xs">
               Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint.
             </p>
             <div className="flex items-center mt-4 gap-2">
-              <img src="/hotline-icon.png" alt="" className="h-6" />
+              <img src="../public/images/hotline.png" alt="Hotline" className="h-6" />
               <span className="text-[#1797a6] font-bold">(+990) 123456789</span>
             </div>
             <div className="w-20 h-20 bg-gray-400 rounded mt-8" />
@@ -253,10 +270,10 @@ export default function CareServices_PetBoardingPage() {
                 <li>Cell : 99001654789532</li>
                 <li>E-mail : petology.us@gmail.com</li>
                 <li className="flex space-x-2 mt-2">
-                  <img src="/facebook-icon.png" alt="Facebook" className="h-4" />
-                  <img src="/twitter-icon.png" alt="Twitter" className="h-4" />
-                  <img src="/linkedin-icon.png" alt="LinkedIn" className="h-4" />
-                  <img src="/youtube-icon.png" alt="YouTube" className="h-4" />
+                  <img src="../public/images/facebook.png" alt="Facebook" className="h-4" />
+                  <img src="../public/images/twitter.png" alt="Twitter" className="h-4" />
+                  <img src="../public/images/linkedin.png" alt="LinkedIn" className="h-4" />
+                  <img src="../public/images/youtube.png" alt="YouTube" className="h-4" />
                 </li>
               </ul>
             </div>

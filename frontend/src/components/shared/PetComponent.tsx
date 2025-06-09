@@ -21,7 +21,7 @@ export default function PetComponent({ pet, onViewDetails, hideViewDetails = fal
       <div className="flex items-center">
         <div>
           <img
-            src={pet.imageUrl || "/pet-avatar.png"}
+            src={pet.imageUrl || "../public/images/image3.png"}
             alt="Pet"
             className="w-32 h-32 object-cover rounded border-2 border-[#1cb0b8] bg-gray-300"
           />

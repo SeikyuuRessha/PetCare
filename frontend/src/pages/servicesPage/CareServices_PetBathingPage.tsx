@@ -15,7 +15,7 @@ export default function CareServices_PetBathingPage() {
     {
       title: "Gói Đồng",
       description: "Gói rẻ nhất phúc lợi vẫn đầy đủ",
-      price: "$50",
+      price: "250.000đ",
       features: [
         "Tắm rửa sạch sẽ.",
         "Sấy tạo kiểu lông sành điệu."
@@ -24,7 +24,7 @@ export default function CareServices_PetBathingPage() {
     {
       title: "Gói Bạc",
       description: "Dịch vụ tắm trọn thêm nhiều ưu đãi",
-      price: "$450",
+      price: "450.000đ",
       features: [
         "Tắm rửa sạch sẽ.",
         "Sấy tạo kiểu lông sành điệu.",
@@ -34,7 +34,7 @@ export default function CareServices_PetBathingPage() {
     {
       title: "Gói Vàng",
       description: "Dịch vụ Vip PRO",
-      price: "$900",
+      price: "900.000đ",
       features: [
         "Tắm rửa sạch sẽ.",
         "Sấy tạo kiểu lông sành điệu.",
@@ -77,9 +77,21 @@ export default function CareServices_PetBathingPage() {
         </div>
         <div className="flex-1 flex justify-end items-center gap-4">
           <div className="relative w-[320px] h-[220px]">
-            <div className="absolute left-16 top-0 w-[180px] h-[140px] bg-gray-300 rounded-lg" />
-            <div className="absolute left-8 top-8 w-[180px] h-[140px] bg-gray-400 rounded-lg" />
-            <div className="absolute left-0 top-16 w-[180px] h-[140px] bg-gray-500 rounded-lg" />
+            <img 
+              src="../public/images/bath.jpg" 
+              className="absolute left-16 top-0 w-[180px] h-[140px] object-cover rounded-lg"
+              alt="Bath Service 1"
+            />
+            <img 
+              src="../public/images/bath.jpg" 
+              className="absolute left-8 top-8 w-[180px] h-[140px] object-cover rounded-lg"
+              alt="Bath Service 2"
+            />
+            <img 
+              src="../public/images/bath.jpg" 
+              className="absolute left-0 top-16 w-[180px] h-[140px] object-cover rounded-lg"
+              alt="Bath Service 3"
+            />
           </div>
         </div>
       </section>
@@ -104,7 +116,12 @@ export default function CareServices_PetBathingPage() {
         <h2 className="text-3xl font-bold mb-8 text-[#7bb12b]"><span className="text-black">#</span>Instagram</h2>
         <div className="flex gap-8 justify-center">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="relative w-40 h-40 bg-gray-300 rounded-lg flex items-end justify-center overflow-hidden border-b-4 border-[#1797a6]">
+            <div key={i} className="relative w-40 h-40 rounded-lg overflow-hidden border-b-4 border-[#1797a6]">
+              <img 
+                src={`../public/images/staff${i}.jpg`}
+                alt={`Instagram post ${i}`}
+                className="w-full h-full object-cover"
+              />
               <span className="absolute left-2 top-2 text-xs text-white">Thú cưng cùng chủ nhân đáng yêu!</span>
             </div>
           ))}
@@ -134,17 +151,19 @@ export default function CareServices_PetBathingPage() {
         <div className="flex flex-col md:flex-row justify-between max-w-6xl mx-auto px-12">
           <div className="mb-8 md:mb-0">
             <div className="flex items-center space-x-2 mb-2">
-              <img src="/logo.png" alt="PetHealthy Logo" className="h-8" />
+              <img src="../public/images/logo.png" alt="PetHealthy Logo" className="h-8" />
               <span className="font-bold text-[#7bb12b] text-2xl">PETHEALTHY</span>
             </div>
             <p className="text-gray-600 mt-2 max-w-xs">
               Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint.
             </p>
             <div className="flex items-center mt-4 gap-2">
-              <img src="/hotline-icon.png" alt="" className="h-6" />
+              <img src="../public/images/hotline.png" alt="Hotline" className="h-6" />
               <span className="text-[#1797a6] font-bold">(+990) 123456789</span>
             </div>
-            <div className="w-20 h-20 bg-gray-400 rounded mt-8" />
+            <div className="w-20 h-20 overflow-hidden rounded mt-8">
+              <img src="../public/images/qr.jpg" alt="QR Code" className="w-full h-full object-cover" />
+            </div>
           </div>
           <div className="flex space-x-16 mt-6 md:mt-0">
             <div>
@@ -174,10 +193,10 @@ export default function CareServices_PetBathingPage() {
                 <li>Cell : 99001654789532</li>
                 <li>E-mail : petology.us@gmail.com</li>
                 <li className="flex space-x-2 mt-2">
-                  <img src="/facebook-icon.png" alt="Facebook" className="h-4" />
-                  <img src="/twitter-icon.png" alt="Twitter" className="h-4" />
-                  <img src="/linkedin-icon.png" alt="LinkedIn" className="h-4" />
-                  <img src="/youtube-icon.png" alt="YouTube" className="h-4" />
+                  <img src="../public/images/facebook.png" alt="Facebook" className="h-4" />
+                  <img src="../public/images/twitter.png" alt="Twitter" className="h-4" />
+                  <img src="../public/images/linkedin.png" alt="LinkedIn" className="h-4" />
+                  <img src="../public/images/youtube.png" alt="YouTube" className="h-4" />
                 </li>
               </ul>
             </div>

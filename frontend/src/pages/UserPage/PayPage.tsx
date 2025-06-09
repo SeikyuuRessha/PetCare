@@ -43,13 +43,15 @@ export default function PayPage() {
                   <button className="text-gray-400 hover:text-red-500 text-lg font-bold">×</button>
                 </td>
                 <td className="py-4 flex items-center gap-3 min-w-[200px]">
-                  <div className="w-10 h-10 bg-gray-400 rounded" />
+                  <div className="w-10 h-10 overflow-hidden rounded">
+                    <img src="../public/images/train.jpg" alt="Huấn luyện" className="w-full h-full object-cover"/>
+                  </div>
                   <span className="font-semibold">Huấn luyện Pet</span>
                 </td>
                 <td className="py-4">Gói bạc</td>
-                <td className="py-4">$35.00</td>
+                <td className="py-4">350.000đ</td>
                 <td className="py-4">Shi</td>
-                <td className="py-4">$35.00</td>
+                <td className="py-4">350.000đ</td>
               </tr>
               {/* Row 2 */}
               <tr className="border-b">
@@ -57,13 +59,15 @@ export default function PayPage() {
                   <button className="text-gray-400 hover:text-red-500 text-lg font-bold">×</button>
                 </td>
                 <td className="py-4 flex items-center gap-3 min-w-[200px]">
-                  <div className="w-10 h-10 bg-gray-400 rounded" />
+                  <div className="w-10 h-10 overflow-hidden rounded">
+                    <img src="../public/images/bath.jpg" alt="Tắm" className="w-full h-full object-cover"/>
+                  </div>
                   <span className="font-semibold">Tắm cho thú cưng</span>
                 </td>
                 <td className="py-4">Gói vàng</td>
-                <td className="py-4">$25.00</td>
+                <td className="py-4">250.000đ</td>
                 <td className="py-4">John</td>
-                <td className="py-4">$75.00</td>
+                <td className="py-4">750.000đ</td>
               </tr>
               {/* Row 3 */}
               <tr>
@@ -71,20 +75,22 @@ export default function PayPage() {
                   <button className="text-gray-400 hover:text-red-500 text-lg font-bold">×</button>
                 </td>
                 <td className="py-4 flex items-center gap-3 min-w-[200px]">
-                  <div className="w-10 h-10 bg-gray-400 rounded" />
+                  <div className="w-10 h-10 overflow-hidden rounded">
+                    <img src="../public/images/board.jpg" alt="Gửi thú cưng" className="w-full h-full object-cover"/>
+                  </div>
                   <span className="font-semibold">Gửi thú cưng</span>
                 </td>
                 <td className="py-4">---</td>
-                <td className="py-4">$110.50</td>
+                <td className="py-4">600.000đ</td>
                 <td className="py-4">Bánh bèo</td>
-                <td className="py-4">$110.50</td>
+                <td className="py-4">600.000đ</td>
               </tr>
             </tbody>
           </table>
         </div>
         <div className="flex justify-end items-center mb-8">
           <span className="text-lg font-semibold mr-2">Tổng :</span>
-          <span className="text-[#1797a6] text-xl font-bold">$ 220.50</span>
+          <span className="text-[#1797a6] text-xl font-bold">1.700.000đ</span>
         </div>
         <div className="flex justify-center gap-4">
           <button className="bg-[#1797a6] text-white px-8 py-2 rounded font-semibold text-lg shadow hover:bg-[#127c8a] transition">

@@ -1,10 +1,79 @@
 import React, { useState } from 'react';
+import PetComponent from '../shared/PetComponent';
 
-export default function AppointmentForm() {
+interface AppointFormData {
+  ownerName: string;
+  phone: string;
+  pet: Pet;
+  email: string;
+  address: string;
+  date: string;
+  time: string;
+  symptoms: string;
+}
+
+interface AppointmentFormProps {
+  appointment?: {
+    ownerName: string;
+    phone: string;
+    pet: {
+      id: string;
+      name: string;
+      species: string;
+      breed: string;
+      owner: string;
+      imageUrl: string;
+    };
+    email: string;
+    address: string;
+    date: string;
+    time: string;
+    symptoms: string;
+    status: 'pending' | 'success' | 'rejected';
+  };
+  onClose?: () => void;
+  onAccept?: () => void;
+  onReject?: () => void;
+  readOnly?: boolean;
+  onSubmit?: (formData: AppointFormData) => void;
+}
+
+interface Pet {
+  id: string;
+  name: string;
+  owner: string;
+  species: string;
+  breed: string;
+  imageUrl: string;
+}
+
+export default function AppointmentForm({ onSubmit, ...props }: AppointmentFormProps) {
   const [date, setDate] = useState<Date | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [time, setTime] = useState('');
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const [showPetList, setShowPetList] = useState(false);
+  const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
+
+  // Update mock data image paths
+  const availablePets = [
+    { 
+      id: '1', 
+      name: 'Shi', 
+      owner: 'Nguyễn Văn A', 
+      species: 'Chó', 
+      breed: 'Shiba',
+      imageUrl: '../public/images/image1.png'
+    },
+    { 
+      id: '2', 
+      name: 'Miu', 
+      owner: 'Trần Thị B', 
+      species: 'Mèo', 
+      breed: 'Anh Lông Ngắn',
+      imageUrl: '../public/images/image3.png'
+    },
+  ];
 
   // Simple calendar for demo (not production ready)
   function Calendar({ value, onChange }: { value: Date | null; onChange: (d: Date) => void }) {
@@ -90,80 +159,205 @@ export default function AppointmentForm() {
     );
   }
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!selectedPet) {
+      alert('Vui lòng chọn thú cưng!');
+      return;
+    }
+
+    if (!date || !time) {
+      alert('Vui lòng chọn ngày và giờ khám!');
+      return;
+    }
+
+    const form = e.target as HTMLFormElement;
+    const formData: AppointFormData = {
+      ownerName: form.ownerName.value,
+      phone: form.phone.value,
+      pet: selectedPet,
+      email: form.email.value,
+      address: form.address.value || '',
+      date: date.toLocaleDateString(),
+      time: time,
+      symptoms: form.symptoms.value || ''
+    };
+
+    // Debug log
+    console.log('Form Data:', formData);
+
+    // Gọi onSubmit và đảm bảo nó tồn tại
+    if (onSubmit) {
+      onSubmit(formData);
+    }
+  };
+
   return (
-    <form className="bg-[#ededed] rounded-2xl border border-gray-400 p-6 max-w-xl mx-auto shadow" style={{ minHeight: 340 }}>
+    <form onSubmit={handleSubmit} className="bg-[#ededed] rounded-2xl border border-gray-400 p-6 max-w-xl mx-auto shadow" style={{ minHeight: 340 }}>
       <div className="mb-2">
         <label className="block text-sm mb-1">Tên Chủ Nhân <span className="text-[#7bb12b]">*</span></label>
-        <input className="w-full border rounded px-3 py-2" />
+        <input 
+          name="ownerName"
+          required
+          className={`w-full border rounded px-3 py-2 ${props.readOnly ? 'bg-gray-50' : ''}`}
+          defaultValue={props.appointment?.ownerName || ''}
+          readOnly={props.readOnly}
+        />
       </div>
       <div className="mb-2">
         <label className="block text-sm mb-1">Số điện thoại <span className="text-[#7bb12b]">*</span></label>
-        <input className="w-full border rounded px-3 py-2" />
+        <input 
+          name="phone"
+          required
+          className={`w-full border rounded px-3 py-2 ${props.readOnly ? 'bg-gray-50' : ''}`}
+          defaultValue={props.appointment?.phone || ''}
+          readOnly={props.readOnly}
+        />
       </div>
-      <div className="flex gap-2 mb-2">
-        <div className="flex-1">
-          <label className="block text-sm mb-1">Tên thú cưng</label>
-          <input className="w-full border rounded px-3 py-2" />
-        </div>
-        <div className="flex-1">
-          <label className="block text-sm mb-1">Loài động vật <span className="text-[#7bb12b]">*</span></label>
-          <input className="w-full border rounded px-3 py-2" />
-        </div>
+      {/* Pet selection section */}
+      <div className="mb-4">
+        <label className="block text-sm mb-1">Thông tin thú cưng <span className="text-[#7bb12b]">*</span></label>
+        {props.readOnly ? (
+          <div className="mb-2">
+            <PetComponent 
+              pet={props.appointment!.pet}
+              onViewDetails={() => {}}
+              hideViewDetails={true}
+            />
+          </div>
+        ) : (
+          <>
+            {selectedPet ? (
+              <div className="mb-2">
+                <PetComponent 
+                  pet={selectedPet}
+                  onViewDetails={() => {}}
+                  hideViewDetails={true}
+                />
+              </div>
+            ) : (
+              <div className="text-gray-500 mb-2">Vui lòng chọn thú cưng</div>
+            )}
+            <button
+              type="button"
+              className="bg-[#7bb12b] text-white px-8 py-2 rounded-full font-semibold shadow hover:bg-[#5d990f] transition"
+              onClick={() => setShowPetList(true)}
+            >
+              Chọn thú cưng
+            </button>
+          </>
+        )}
       </div>
       <div className="mb-2">
         <label className="block text-sm mb-1">Email <span className="text-[#7bb12b]">*</span></label>
-        <input className="w-full border rounded px-3 py-2" />
+        <input 
+          name="email"
+          required
+          type="email"
+          className={`w-full border rounded px-3 py-2 ${props.readOnly ? 'bg-gray-50' : ''}`}
+          defaultValue={props.appointment?.email || ''}
+          readOnly={props.readOnly}
+        />
       </div>
       <div className="mb-2">
         <label className="block text-sm mb-1">Địa chỉ thường trú</label>
-        <input className="w-full border rounded px-3 py-2" />
+        <input 
+          className={`w-full border rounded px-3 py-2 ${props.readOnly ? 'bg-gray-50' : ''}`}
+          defaultValue={props.appointment?.address || ''}
+          readOnly={props.readOnly}
+        />
       </div>
       <div className="mb-2">
-        <label className="block text-sm mb-1">Chọn ngày khám</label>
-        <div className="relative">
-          <input
-            className="w-full border rounded px-3 py-2 cursor-pointer bg-white"
-            value={date ? date.toLocaleDateString() : ''}
-            readOnly
-            onClick={() => setShowDatePicker(v => !v)}
-            placeholder="Chọn ngày"
-          />
-          {showDatePicker && (
-            <div className="absolute z-10 mt-2">
-              <Calendar value={date} onChange={d => { setDate(d); setShowDatePicker(false); }} />
-            </div>
-          )}
-        </div>
+        <label className="block text-sm mb-1">Ngày khám</label>
+        <input 
+          className={`w-full border rounded px-3 py-2 ${props.readOnly ? 'bg-gray-50' : ''}`}
+          defaultValue={props.readOnly ? props.appointment?.date || '' : date?.toLocaleDateString() || ''}
+          readOnly={true}
+          onClick={() => !props.readOnly && setShowDatePicker(v => !v)}
+        />
+        {!props.readOnly && showDatePicker && (
+          <div className="absolute z-10 mt-2">
+            <Calendar value={date} onChange={d => { setDate(d); setShowDatePicker(false); }} />
+          </div>
+        )}
       </div>
       <div className="mb-2">
-        <label className="block text-sm mb-1">Chọn khung giờ khám</label>
-        <div className="relative">
-          <input
-            className="w-full border rounded px-3 py-2 cursor-pointer bg-white"
-            value={time}
-            readOnly
-            onClick={() => setShowTimePicker(v => !v)}
-            placeholder="Chọn khung giờ"
-          />
-          {showTimePicker && (
-            <div className="absolute z-10 mt-2">
-              <TimePicker value={time} onChange={t => { setTime(t); setShowTimePicker(false); }} />
-            </div>
-          )}
-        </div>
+        <label className="block text-sm mb-1">Khung giờ khám</label>
+        <input 
+          className={`w-full border rounded px-3 py-2 ${props.readOnly ? 'bg-gray-50' : ''}`}
+          defaultValue={props.readOnly ? props.appointment?.time || '' : time}
+          readOnly={true}
+          onClick={() => !props.readOnly && setShowTimePicker(v => !v)}
+        />
+        {!props.readOnly && showTimePicker && (
+          <div className="absolute z-10 mt-2">
+            <TimePicker value={time} onChange={t => { setTime(t); setShowTimePicker(false); }} />
+          </div>
+        )}
       </div>
       <div className="mb-4">
         <label className="block text-sm mb-1">Triệu chứng</label>
-        <input className="w-full border rounded px-3 py-2" />
+        <input 
+          className={`w-full border rounded px-3 py-2 ${props.readOnly ? 'bg-gray-50' : ''}`}
+          defaultValue={props.appointment?.symptoms || ''}
+          readOnly={props.readOnly}
+        />
       </div>
-      <div className="flex justify-start">
-        <button
-          type="submit"
-          className="bg-[#7bb12b] text-white px-8 py-2 rounded-full font-semibold shadow hover:bg-[#5d990f] transition"
-        >
-          Đặt Lịch Khám
-        </button>
-      </div>
+      {props.readOnly ? (
+        <div className="flex justify-end gap-4">
+          <button
+            type="button"
+            onClick={props.onReject}
+            className="bg-red-500 text-white px-6 py-2 rounded-full font-medium hover:bg-red-600 transition"
+          >
+            Từ chối lịch khám
+          </button>
+          <button
+            type="button"
+            onClick={props.onAccept}
+            className="bg-[#7bb12b] text-white px-6 py-2 rounded-full font-medium hover:bg-[#6aa11e] transition"
+          >
+            Xác nhận lịch khám
+          </button>
+        </div>
+      ) : (
+        <div className="flex justify-start">
+          <button
+            type="submit"
+            className="bg-[#7bb12b] text-white px-8 py-2 rounded-full font-semibold shadow hover:bg-[#5d990f] transition"
+          >
+            Đặt Lịch Khám
+          </button>
+        </div>
+      )}
+
+      {/* Pet Selection Modal */}
+      {showPetList && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50" onClick={() => setShowPetList(false)}>
+          <div className="bg-white rounded-xl p-6 max-w-lg w-full mx-4" onClick={e => e.stopPropagation()}>
+            <h3 className="text-xl font-semibold mb-4 text-center">Danh sách thú cưng</h3>
+            <div className="grid gap-4">
+              {availablePets.map((availablePet) => (
+                <div
+                  key={availablePet.id}
+                  className="cursor-pointer hover:bg-[#f3f7e7] rounded transition"
+                  onClick={() => {
+                    setSelectedPet(availablePet);
+                    setShowPetList(false);
+                  }}
+                >
+                  <PetComponent 
+                    pet={availablePet}
+                    onViewDetails={() => {}}
+                    hideViewDetails={true}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </form>
   );
 }

@@ -25,7 +25,9 @@ export default function CareServicesPage() {
 
       {/* Banner + Info */}
       <section className="flex flex-col md:flex-row items-start px-8 pt-10 pb-4 relative">
-        <div className="w-full md:w-[350px] h-[300px] bg-gray-400 rounded-lg mb-6 md:mb-0" />
+        <div className="w-full md:w-[350px] h-[300px] rounded-lg mb-6 md:mb-0 overflow-hidden">
+          <img src="../public/images/banner.jpg" alt="Pet Care Banner" className="w-full h-full object-cover"/>
+        </div>
         <div className="md:ml-10 flex-1">
           <h1 className="text-3xl font-bold mb-2">
             Về <span className="text-[#7bb12b]">Dịch vụ chăm sóc</span>
@@ -41,7 +43,7 @@ export default function CareServicesPage() {
         <div className="absolute left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-12 top-[260px] md:top-16 bg-white shadow-lg rounded-lg flex w-[420px]">
           <div className="flex-1 flex flex-col items-center justify-center py-4 border-r">
             <div className="bg-gray-200 rounded-full p-2 mb-1">
-              <img src="/phone-icon.png" alt="" className="h-6" />
+              <img src="../public/images/phone.jpg" alt="Phone" className="h-6" />
             </div>
             <div className="text-xs text-gray-700">
               (+990) 12346678<br />
@@ -50,7 +52,7 @@ export default function CareServicesPage() {
           </div>
           <div className="flex-1 flex flex-col items-center justify-center py-4 border-r">
             <div className="bg-gray-200 rounded-full p-2 mb-1">
-              <img src="/location-icon.png" alt="" className="h-6" />
+              <img src="../public/images/location.jpg" alt="Location" className="h-6" />
             </div>
             <div className="text-xs text-gray-700 text-center">
               Melboard Road,<br />Hà Nội
@@ -58,7 +60,7 @@ export default function CareServicesPage() {
           </div>
           <div className="flex-1 flex flex-col items-center justify-center py-4">
             <div className="bg-gray-200 rounded-full p-2 mb-1">
-              <img src="/mail-icon.png" alt="" className="h-6" />
+              <img src="../public/images/th.jpg" alt="Mail" className="h-6" />
             </div>
             <div className="text-xs text-gray-700 text-center">
               pethealthy@gmail.com<br />
@@ -84,7 +86,9 @@ export default function CareServicesPage() {
         <div className="flex flex-wrap justify-center gap-8">
           {/* Service Card - Tắm cho Pet */}
           <div className="bg-white rounded-lg shadow p-6 w-56 flex flex-col items-center">
-            <div className="w-24 h-24 bg-gray-400 rounded-full mb-4" />
+            <div className="w-24 h-24 rounded-full mb-4 overflow-hidden">
+              <img src="../public/images/bath.jpg" alt="Pet Bathing" className="w-full h-full object-cover"/>
+            </div>
             <h3 className="font-bold mb-2">Tắm cho Pet</h3>
             <p className="text-xs text-gray-500 text-center mb-4">
               Amet minim mollit non des ullamco est sit aliqua dolor do amet sint.
@@ -99,7 +103,9 @@ export default function CareServicesPage() {
 
           {/* Service Card - Cắt tỉa lông */}
           <div className="bg-white rounded-lg shadow p-6 w-56 flex flex-col items-center">
-            <div className="w-24 h-24 bg-gray-400 rounded-full mb-4" />
+            <div className="w-24 h-24 rounded-full mb-4 overflow-hidden">
+              <img src="../public/images/groom.jpg" alt="Pet Grooming" className="w-full h-full object-cover"/>
+            </div>
             <h3 className="font-bold mb-2">Cắt tỉa lông</h3>
             <p className="text-xs text-gray-500 text-center mb-4">
               Amet minim mollit non des ullamco est sit aliqua dolor do amet sint.
@@ -114,7 +120,9 @@ export default function CareServicesPage() {
 
           {/* Service Card - Gửi thú cưng */}
           <div className="bg-white rounded-lg shadow p-6 w-56 flex flex-col items-center">
-            <div className="w-24 h-24 bg-gray-400 rounded-full mb-4" />
+            <div className="w-24 h-24 rounded-full mb-4 overflow-hidden">
+              <img src="../public/images/board.jpg" alt="Pet Boarding" className="w-full h-full object-cover"/>
+            </div>
             <h3 className="font-bold mb-2">Gửi thú cưng</h3>
             <p className="text-xs text-gray-500 text-center mb-4">
               Amet minim mollit non des ullamco est sit aliqua dolor do amet sint.
@@ -129,7 +137,9 @@ export default function CareServicesPage() {
 
           {/* Service Card - Huấn luyện Pet */}
           <div className="bg-white rounded-lg shadow p-6 w-56 flex flex-col items-center">
-            <div className="w-24 h-24 bg-gray-400 rounded-full mb-4" />
+            <div className="w-24 h-24 rounded-full mb-4 overflow-hidden">
+              <img src="../public/images/train.jpg" alt="Pet Training" className="w-full h-full object-cover"/>
+            </div>
             <h3 className="font-bold mb-2">Huấn luyện Pet</h3>
             <p className="text-xs text-gray-500 text-center mb-4">
               Amet minim mollit non des ullamco est sit aliqua dolor do amet sint.
@@ -148,23 +158,16 @@ export default function CareServicesPage() {
       <section className="bg-[#f6f8f5] py-16">
         <h2 className="text-3xl font-bold text-center mb-10">Đội ngũ chăm sóc</h2>
         <div className="flex flex-wrap justify-center gap-8">
-          <div className="w-56 h-72 bg-gray-400 rounded-lg flex flex-col items-center justify-end pb-6 relative">
-            <span className="absolute bottom-16 left-1/2 -translate-x-1/2 text-white font-semibold">Nhân viên<br /><span className="text-xs font-normal">chuyên ngành</span></span>
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-1">
-              <span className="w-2 h-2 bg-white rounded-full inline-block" />
-              <span className="w-2 h-2 bg-gray-300 rounded-full inline-block" />
-              <span className="w-2 h-2 bg-gray-300 rounded-full inline-block" />
+          {[1, 2, 3, 4].map((index) => (
+            <div key={index} className="w-56 h-72 rounded-lg overflow-hidden relative">
+              <img 
+                src={`../public/images/staff${index}.jpg`}
+                alt={`Team Member ${index}`}
+                className="w-full h-full object-cover"
+              />
+              <span className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white px-2 py-1 rounded text-xs">Condet Klo</span>
             </div>
-          </div>
-          <div className="w-56 h-72 bg-gray-400 rounded-lg flex flex-col justify-end pb-6 relative">
-            <span className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white px-2 py-1 rounded text-xs">Condet Klo</span>
-          </div>
-          <div className="w-56 h-72 bg-gray-400 rounded-lg flex flex-col justify-end pb-6 relative">
-            <span className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white px-2 py-1 rounded text-xs">Alena Jion</span>
-          </div>
-          <div className="w-56 h-72 bg-gray-400 rounded-lg flex flex-col justify-end pb-6 relative">
-            <span className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white px-2 py-1 rounded text-xs">Marken Dia.</span>
-          </div>
+          ))}
         </div>
       </section>
 
@@ -172,8 +175,8 @@ export default function CareServicesPage() {
       <section className="flex flex-col md:flex-row items-center px-8 py-16 bg-white">
         <div className="relative w-full md:w-[400px] h-[300px]">
           <div className="absolute left-0 top-8 w-[320px] h-[220px] bg-[#1797a6] rounded-lg" />
-          <div className="absolute left-10 top-0 w-[320px] h-[220px] bg-gray-400 rounded-lg flex items-center justify-center">
-            <div className="w-16 h-16 bg-[#1797a6] rounded-full" />
+          <div className="absolute left-10 top-0 w-[320px] h-[220px] overflow-hidden rounded-lg">
+            <img src="../public/images/image2.png" alt="Happy Pet" className="w-full h-full object-cover"/>
           </div>
         </div>
         <div className="md:ml-12 mt-8 md:mt-0 flex-1">
@@ -201,7 +204,7 @@ export default function CareServicesPage() {
         </div>
       </section>
 
-     <Footer />
+      <Footer />
     </div>
   );
 }

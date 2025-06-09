@@ -31,7 +31,7 @@ export default function ChoosePetComponent({
       owner: 'Nguyễn Văn A', 
       species: 'Chó', 
       breed: 'Shiba',
-      imageUrl: '/pet-avatar.png'
+      imageUrl: '../public/images/image1.png'
     },
     { 
       id: '2', 
@@ -39,7 +39,7 @@ export default function ChoosePetComponent({
       owner: 'Trần Thị B', 
       species: 'Mèo', 
       breed: 'Anh Lông Ngắn',
-      imageUrl: '/pet-avatar.png'
+      imageUrl: '../public/images/image3.png'
     },
   ];
 
@@ -108,7 +108,7 @@ export default function ChoosePetComponent({
                 <div className="flex justify-between items-center mt-8">
                   <div className="text-gray-600">
                     <span className="font-medium text-base">
-                      Tổng tiền: <span className="text-[#ff3c00] text-xl">$50</span>
+                      Tổng tiền: <span className="text-[#ff3c00] text-xl">50.000đ</span>
                     </span>
                   </div>
                   <button className="bg-[#7bb12b] text-white px-12 py-2.5 rounded-full font-semibold shadow hover:bg-[#6aa11e] transition min-w-[200px]">

@@ -19,7 +19,7 @@ export default function ViewBookedServicesPage() {
         owner: 'Nguyễn Văn A',
         species: 'Chó',
         breed: 'Shiba',
-        imageUrl: '/pet-avatar.png'
+        imageUrl: '../public/images/image1.png'
       },
       package: {
         title: "Dịch vụ tắm",
@@ -46,7 +46,7 @@ export default function ViewBookedServicesPage() {
         owner: 'Trần Thị B',
         species: 'Mèo',
         breed: 'Anh Lông Ngắn',
-        imageUrl: '/pet-avatar.png'
+        imageUrl: '../public/images/image3.png'
       },
       package: {
         title: "Gửi thú cưng",

@@ -3,15 +3,29 @@ import React, { useState } from 'react';
 interface User_PetInformationFormProps {
   onClose?: () => void;
   onSubmit?: () => void;
+  readOnly?: boolean; // Add this prop
+  petData?: { // Add this prop
+    id: string;
+    owner: string;
+    petName: string;
+    species: string;
+    breed: string;
+    gender: 'Đực' | 'Cái';
+    age: number;
+    color: string;
+    imageUrl: string;
+  };
 }
 
 export default function User_PetInformationForm({
   onClose,
   onSubmit,
+  readOnly = false, // Add default value
+  petData, // Add to props
 }: User_PetInformationFormProps) {
-  const [gender, setGender] = useState<'Đực' | 'Cái'>('Đực');
+  const [gender, setGender] = useState<'Đực' | 'Cái'>(petData?.gender || 'Đực');
   const [petImage, setPetImage] = useState<File | null>(null);
-  const [petImageUrl, setPetImageUrl] = useState<string | null>(null);
+  const [petImageUrl, setPetImageUrl] = useState<string | null>(petData?.imageUrl || null);
 
   const handlePetImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
@@ -52,18 +66,30 @@ export default function User_PetInformationForm({
                 <label className="block text-sm mb-1">
                   Tên thú cưng <span className="text-[#7bb12b]">*</span>
                 </label>
-                <input className="w-full border rounded px-3 py-2" />
+                <input
+                  className="w-full border rounded px-3 py-2"
+                  defaultValue={petData?.petName || ''}
+                  readOnly={readOnly}
+                />
               </div>
               <div className="flex-1">
                 <label className="block text-sm mb-1">
                   Loài động vật <span className="text-[#7bb12b]">*</span>
                 </label>
-                <input className="w-full border rounded px-3 py-2" />
+                <input
+                  className="w-full border rounded px-3 py-2"
+                  defaultValue={petData?.species || ''}
+                  readOnly={readOnly}
+                />
               </div>
             </div>
             <div className="mb-2">
               <label className="block text-sm mb-1">Giống</label>
-              <input className="w-full border rounded px-3 py-2" />
+              <input
+                className="w-full border rounded px-3 py-2"
+                defaultValue={petData?.breed || ''}
+                readOnly={readOnly}
+              />
             </div>
             <div className="flex gap-4 mb-2">
               <div className="flex-1">
@@ -79,6 +105,7 @@ export default function User_PetInformationForm({
                         : 'bg-white text-black border-gray-300'
                     }`}
                     onClick={() => setGender('Đực')}
+                    disabled={readOnly}
                   >
                     Đực
                   </button>
@@ -90,6 +117,7 @@ export default function User_PetInformationForm({
                         : 'bg-white text-black border-gray-300'
                     }`}
                     onClick={() => setGender('Cái')}
+                    disabled={readOnly}
                   >
                     Cái
                   </button>
@@ -99,26 +127,42 @@ export default function User_PetInformationForm({
                 <label className="block text-sm mb-1">
                   Tuổi <span className="text-[#7bb12b]">*</span>
                 </label>
-                <input className="w-full border rounded px-3 py-2" />
+                <input
+                  className="w-full border rounded px-3 py-2"
+                  defaultValue={petData?.age.toString() || ''}
+                  readOnly={readOnly}
+                />
               </div>
               <div className="flex-1">
                 <label className="block text-sm mb-1">
                   Màu sắc lông <span className="text-[#7bb12b]">*</span>
                 </label>
-                <input className="w-full border rounded px-3 py-2" />
+                <input
+                  className="w-full border rounded px-3 py-2"
+                  defaultValue={petData?.color || ''}
+                  readOnly={readOnly}
+                />
               </div>
             </div>
             <div className="mb-2">
               <label className="block text-sm mb-1">
                 Đặc điểm nhận dạng <span className="text-[#7bb12b]">*</span>
               </label>
-              <input className="w-full border rounded px-3 py-2" />
+              <input
+                className="w-full border rounded px-3 py-2"
+                defaultValue={petData?.id || ''}
+                readOnly={readOnly}
+              />
             </div>
             <div className="mb-2">
               <label className="block text-sm mb-1">
                 Tên chủ nhân<span className="text-[#7bb12b]">*</span>
               </label>
-              <input className="w-full border rounded px-3 py-2" />
+              <input
+                className="w-full border rounded px-3 py-2"
+                defaultValue={petData?.owner || ''}
+                readOnly={readOnly}
+              />
             </div>
           </div>
           {/* Right column */}
@@ -138,6 +182,7 @@ export default function User_PetInformationForm({
               accept="image/*"
               className="mb-2"
               onChange={handlePetImageChange}
+              disabled={readOnly}
             />
           </div>
         </div>
@@ -152,6 +197,7 @@ export default function User_PetInformationForm({
           <button
             type="submit"
             className="bg-[#7bb12b] text-white px-6 py-2 rounded-full hover:bg-[#6aa11e]"
+            disabled={readOnly}
           >
             Lưu thông tin
           </button>
