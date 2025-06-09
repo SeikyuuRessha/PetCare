@@ -4,8 +4,9 @@ import { CreateUserDto } from "./dtos/create-user.dto";
 import { UpdateUserDto } from "./dtos/update-user.dto";
 import { handleService } from "../common/utils/handleService";
 import { AppException } from "../common/exceptions/app.exception";
-import { ExceptionCode } from "../common/enums/exception-code.enum";
+import { ExceptionCode } from "../common/exception/exception-code";
 import * as bcrypt from "bcrypt";
+import { HttpStatus } from "@nestjs/common";
 
 @Injectable()
 export class UsersService {
@@ -18,7 +19,7 @@ export class UsersService {
                 where: { username: createUserDto.username },
             });
             if (existingUser) {
-                throw AppException.conflict("Username already exists", ExceptionCode.USERNAME_ALREADY_EXISTS);
+                throw new AppException(ExceptionCode.USER_ALREADY_EXISTS, null, HttpStatus.CONFLICT);
             }
 
             // Check if email already exists (if provided)
@@ -27,7 +28,7 @@ export class UsersService {
                     where: { email: createUserDto.email },
                 });
                 if (existingEmail) {
-                    throw AppException.conflict("Email already exists", ExceptionCode.EMAIL_ALREADY_EXISTS);
+                    throw new AppException(ExceptionCode.EMAIL_ALREADY_EXISTS, null, HttpStatus.CONFLICT);
                 }
             }
 
@@ -75,7 +76,7 @@ export class UsersService {
             });
 
             if (!user) {
-                throw AppException.notFound("User not found", ExceptionCode.USER_NOT_FOUND);
+                throw new AppException(ExceptionCode.USER_NOT_FOUND, null, HttpStatus.NOT_FOUND);
             }
 
             return user;
@@ -89,7 +90,7 @@ export class UsersService {
             });
 
             if (!user) {
-                throw AppException.notFound("User not found", ExceptionCode.USER_NOT_FOUND);
+                throw new AppException(ExceptionCode.USER_NOT_FOUND, null, HttpStatus.NOT_FOUND);
             }
 
             // Check username uniqueness if updating
@@ -98,7 +99,7 @@ export class UsersService {
                     where: { username: updateUserDto.username },
                 });
                 if (existingUser) {
-                    throw AppException.conflict("Username already exists", ExceptionCode.USERNAME_ALREADY_EXISTS);
+                    throw new AppException(ExceptionCode.USER_ALREADY_EXISTS, null, HttpStatus.CONFLICT);
                 }
             }
 
@@ -108,7 +109,7 @@ export class UsersService {
                     where: { email: updateUserDto.email },
                 });
                 if (existingEmail) {
-                    throw AppException.conflict("Email already exists", ExceptionCode.EMAIL_ALREADY_EXISTS);
+                    throw new AppException(ExceptionCode.EMAIL_ALREADY_EXISTS, null, HttpStatus.CONFLICT);
                 }
             }
 
@@ -140,25 +141,38 @@ export class UsersService {
             });
 
             if (!user) {
-                throw AppException.notFound("User not found", ExceptionCode.USER_NOT_FOUND);
+                throw new AppException(ExceptionCode.USER_NOT_FOUND, null, HttpStatus.NOT_FOUND);
             }
 
             return this.prisma.user.delete({
                 where: { userId: id },
             });
         });
-    }
-
-    // Authentication-related methods
+    } // Authentication-related methods
     async findByEmail(email: string) {
         return this.prisma.user.findUnique({
             where: { email },
+            include: {
+                _count: false,
+            },
+        });
+    }
+
+    async findByUsername(username: string) {
+        return this.prisma.user.findUnique({
+            where: { username },
+            include: {
+                _count: false,
+            },
         });
     }
 
     async findById(id: string) {
         return this.prisma.user.findUnique({
             where: { userId: id },
+            include: {
+                _count: false,
+            },
         });
     }
 

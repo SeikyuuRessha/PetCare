@@ -1,12 +1,12 @@
 export interface ApiResponse<T = any> {
     code: number;
-    msg: string;
+    message: string;
     data: T;
 }
 
 export interface PaginatedResponse<T = any> {
     code: number;
-    msg: string;
+    message: string;
     data: T[];
     meta: {
         total: number;

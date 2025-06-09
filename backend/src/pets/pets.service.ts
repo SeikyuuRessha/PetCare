@@ -3,7 +3,8 @@ import { PrismaService } from "../prisma/prisma.service";
 import { CreatePetDto } from "./dtos/create-pet.dto";
 import { UpdatePetDto } from "./dtos/update-pet.dto";
 import { handleService } from "../common/utils/handleService";
-import { AppException, ExceptionCode } from "../common/exception/app-exception";
+import { AppException } from "../common/exceptions/app.exception";
+import { ExceptionCode } from "../common/exception/exception-code";
 
 @Injectable()
 export class PetsService {

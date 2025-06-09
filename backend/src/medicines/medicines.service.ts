@@ -3,7 +3,8 @@ import { PrismaService } from "../prisma/prisma.service";
 import { CreateMedicineDto } from "./dtos/create-medicine.dto";
 import { UpdateMedicineDto } from "./dtos/update-medicine.dto";
 import { handleService } from "../common/utils/handleService";
-import { AppException, ExceptionCode } from "../common/exception/app-exception";
+import { AppException } from "../common/exceptions/app.exception";
+import { ExceptionCode } from "../common/exception/exception-code";
 
 @Injectable()
 export class MedicinesService {

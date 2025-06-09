@@ -4,6 +4,9 @@ import { ConfigModule } from "@nestjs/config";
 // Core modules
 import { PrismaService } from "./prisma/prisma.service";
 
+// Security modules
+import { AuthModule } from "./auth/auth.module";
+
 // Business modules
 import { UsersModule } from "./users/users.module";
 import { PetsModule } from "./pets/pets.module";
@@ -24,6 +27,7 @@ import { PaymentsModule } from "./payments/payments.module";
 @Module({
     imports: [
         ConfigModule.forRoot({ isGlobal: true }),
+        AuthModule,
         UsersModule,
         PetsModule,
         AppointmentsModule,

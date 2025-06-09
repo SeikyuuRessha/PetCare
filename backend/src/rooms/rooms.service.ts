@@ -3,7 +3,8 @@ import { PrismaService } from "../prisma/prisma.service";
 import { CreateRoomDto } from "./dtos/create-room.dto";
 import { UpdateRoomDto } from "./dtos/update-room.dto";
 import { handleService } from "../common/utils/handleService";
-import { AppException, ExceptionCode } from "../common/exception/app-exception";
+import { AppException } from "../common/exceptions/app.exception";
+import { ExceptionCode } from "../common/exception/exception-code";
 
 @Injectable()
 export class RoomsService {
@@ -17,7 +18,7 @@ export class RoomsService {
             });
 
             if (existingRoom) {
-                throw new AppException("ROOM_NUMBER_ALREADY_EXISTS");
+                throw new AppException(ExceptionCode.ROOM_NUMBER_ALREADY_EXISTS);
             }
 
             return this.prisma.room.create({
@@ -93,16 +94,14 @@ export class RoomsService {
 
             if (!room) {
                 throw new AppException(ExceptionCode.ROOM_NOT_FOUND);
-            }
-
-            // Check if new room number already exists (if updating roomNumber)
+            } // Check if new room number already exists (if updating roomNumber)
             if (updateRoomDto.roomNumber && updateRoomDto.roomNumber !== room.roomNumber) {
                 const existingRoom = await this.prisma.room.findUnique({
                     where: { roomNumber: updateRoomDto.roomNumber },
                 });
 
                 if (existingRoom) {
-                    throw new AppException("ROOM_NUMBER_ALREADY_EXISTS");
+                    throw new AppException(ExceptionCode.ROOM_NUMBER_ALREADY_EXISTS);
                 }
             }
 

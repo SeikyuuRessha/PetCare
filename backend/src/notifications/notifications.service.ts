@@ -4,7 +4,8 @@ import { CreateNotificationDto } from "./dtos/create-notification.dto";
 import { UpdateNotificationDto } from "./dtos/update-notification.dto";
 import { CreateNotificationUserDto } from "./dtos/create-notification-user.dto";
 import { handleService } from "../common/utils/handleService";
-import { AppException, ExceptionCode } from "../common/exception/app-exception";
+import { AppException } from "../common/exceptions/app.exception";
+import { ExceptionCode } from "../common/exception/exception-code";
 
 @Injectable()
 export class NotificationsService {

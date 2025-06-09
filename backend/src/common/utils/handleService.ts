@@ -1,18 +1,23 @@
-import { ApiResponse } from "../interfaces/api-response.interface";
+import { AppException } from "../exceptions/app.exception";
+import { ExceptionCode } from "../exception/exception-code";
 
-export const handleService = async <T>(serviceFunction: () => Promise<T>): Promise<ApiResponse<T>> => {
+export async function handleService<T>(
+    fn: () => Promise<T>,
+    successMessage?: string,
+    fallbackError = ExceptionCode.INTERNAL_SERVER_ERROR
+) {
     try {
-        const data = await serviceFunction();
+        const data = await fn();
         return {
             code: 1,
-            msg: "Success",
+            message: successMessage || "Success",
             data,
         };
     } catch (error) {
-        return {
-            code: 0,
-            msg: error.message || "An unexpected error occurred",
-            data: null,
-        };
+        if (error instanceof AppException) {
+            throw error;
+        }
+
+        throw new AppException(fallbackError, { originalError: error?.toString() });
     }
-};
+}
