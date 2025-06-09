@@ -1,148 +1,117 @@
-import { Injectable, UnauthorizedException, ConflictException } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
-import { ConfigService } from "@nestjs/config";
-import * as bcrypt from "bcryptjs";
-import { PrismaService } from "../common/prisma.service";
-import { AppException } from "../common/exception/app-exception";
-import { ExceptionCode } from "../common/exception/exception-code";
-import { v4 as uuidv4 } from "uuid";
-
-export interface LoginDto {
-    username: string;
-    password: string;
-}
-
-export interface RegisterDto {
-    username: string;
-    email?: string;
-    fullName: string;
-    password: string;
-    phone?: string;
-    address?: string;
-    role?: string;
-}
+import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import * as bcrypt from 'bcrypt';
+import { UsersService } from '../users/users.service';
+import { AppException } from '../common/exceptions/app.exception';
+import { ExceptionCode } from '../common/enums/exception-code.enum';
+import { JwtPayload, TokenPair, LoginResponse } from './interfaces/auth.interface';
+import { LoginDto } from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
-    constructor(
-        private prismaService: PrismaService,
-        private jwtService: JwtService,
-        private configService: ConfigService
-    ) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
+    private readonly usersService: UsersService,
+  ) {}
 
-    async register(registerDto: RegisterDto) {
-        // Check if user exists
-        const existingUser = await this.prismaService.user.findFirst({
-            where: {
-                OR: [{ username: registerDto.username }, { email: registerDto.email }],
-            },
-        });
-        if (existingUser) {
-            if (existingUser.username === registerDto.username) {
-                throw new AppException(ExceptionCode.USER_ALREADY_EXISTS);
-            }
-            if (existingUser.email === registerDto.email) {
-                throw new AppException(ExceptionCode.EMAIL_ALREADY_EXISTS);
-            }
-        }
+  async login(loginDto: LoginDto): Promise<LoginResponse> {
+    const { email, password } = loginDto;
 
-        // Hash password
-        const hashedPassword = await bcrypt.hash(registerDto.password, 15); // Create user
-        const user = await this.prismaService.user.create({
-            data: {
-                username: registerDto.username,
-                email: registerDto.email,
-                fullName: registerDto.fullName,
-                password: hashedPassword,
-                phone: registerDto.phone,
-                address: registerDto.address,
-                role: registerDto.role || "USER",
-            },
-            select: {
-                userId: true,
-                username: true,
-                email: true,
-                fullName: true,
-                role: true,
-                phone: true,
-                address: true,
-            },
-        });
-
-        // Generate JWT
-        const payload = {
-            userId: user.userId,
-            username: user.username,
-            role: user.role,
-        };
-
-        const accessToken = this.jwtService.sign(payload);
-
-        return {
-            user,
-            accessToken,
-        };
+    // Find user by email
+    const user = await this.usersService.findByEmail(email);
+    if (!user) {
+      throw AppException.unauthorized('Invalid credentials', ExceptionCode.INVALID_CREDENTIALS);
     }
 
-    async login(loginDto: LoginDto) {
-        // Find user
-        const user = await this.prismaService.user.findUnique({
-            where: { username: loginDto.username },
-        });
-        if (!user) {
-            throw new AppException(ExceptionCode.USER_NOT_FOUND);
-        }
-
-        // Verify password
-        const isPasswordValid = await bcrypt.compare(loginDto.password, user.password);
-        if (!isPasswordValid) {
-            throw new AppException(ExceptionCode.INVALID_PASSWORD);
-        }
-
-        // Generate JWT
-        const payload = {
-            userId: user.userId,
-            username: user.username,
-            role: user.role,
-        };
-
-        const accessToken = this.jwtService.sign(payload);
-
-        return {
-            user: {
-                userId: user.userId,
-                username: user.username,
-                email: user.email,
-                fullName: user.fullName,
-                role: user.role,
-                phone: user.phone,
-                address: user.address,
-            },
-            accessToken,
-        };
+    // Verify password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw AppException.unauthorized('Invalid credentials', ExceptionCode.INVALID_CREDENTIALS);
     }
 
-    async validateUser(userId: string) {
-        const user = await this.prismaService.user.findUnique({
-            where: { userId },
-            select: {
-                userId: true,
-                username: true,
-                email: true,
-                fullName: true,
-                role: true,
-                phone: true,
-                address: true,
-            },
-        });
+    // Generate tokens
+    const tokens = await this.generateTokens({
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+    });
 
-        return user;
+    // Update refresh token in database
+    const hashedRefreshToken = await bcrypt.hash(tokens.refreshToken, 10);
+    await this.usersService.updateRefreshToken(user.id, hashedRefreshToken);
+
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+      },
+      tokens,
+    };
+  }
+
+  async logout(userId: string): Promise<void> {
+    await this.usersService.updateRefreshToken(userId, null);
+  }
+
+  async refreshTokens(refreshToken: string): Promise<TokenPair> {
+    try {
+      const payload = this.jwtService.verify(refreshToken, {
+        secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+      });
+
+      const user = await this.usersService.findById(payload.sub);
+      if (!user || !user.refreshToken) {
+        throw AppException.unauthorized('Invalid refresh token', ExceptionCode.TOKEN_INVALID);
+      }
+
+      const isRefreshTokenValid = await bcrypt.compare(refreshToken, user.refreshToken);
+      if (!isRefreshTokenValid) {
+        throw AppException.unauthorized('Invalid refresh token', ExceptionCode.TOKEN_INVALID);
+      }
+
+      const tokens = await this.generateTokens({
+        sub: user.id,
+        email: user.email,
+        role: user.role,
+      });
+
+      const hashedRefreshToken = await bcrypt.hash(tokens.refreshToken, 10);
+      await this.usersService.updateRefreshToken(user.id, hashedRefreshToken);
+
+      return tokens;
+    } catch (error) {
+      throw AppException.unauthorized('Invalid refresh token', ExceptionCode.TOKEN_INVALID);
     }
-    async getProfile(userId: string) {
-        const user = await this.validateUser(userId);
-        if (!user) {
-            throw new AppException(ExceptionCode.USER_NOT_FOUND);
-        }
-        return user;
+  }
+
+  async validateAccessToken(payload: JwtPayload): Promise<any> {
+    const user = await this.usersService.findById(payload.sub);
+    if (!user) {
+      throw AppException.unauthorized('User not found', ExceptionCode.USER_NOT_FOUND);
     }
+    return user;
+  }
+
+  private async generateTokens(payload: JwtPayload): Promise<TokenPair> {
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(payload, {
+        secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
+        expiresIn: this.configService.get<string>('JWT_ACCESS_EXPIRES_IN', '15m'),
+      }),
+      this.jwtService.signAsync(payload, {
+        secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+        expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRES_IN', '7d'),
+      }),
+    ]);
+
+    return {
+      accessToken,
+      refreshToken,
+    };
+  }
 }

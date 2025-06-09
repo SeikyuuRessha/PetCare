@@ -1,60 +1,72 @@
 import {
-    ExceptionFilter,
-    Catch,
-    ArgumentsHost,
-    HttpException,
-    HttpStatus,
-    Logger,
-} from "@nestjs/common";
-import { Response } from "express";
-import { AppException } from "../exception/app-exception";
-import { IErrorResponse } from "../interfaces/response.interface";
+  ExceptionFilter,
+  Catch,
+  ArgumentsHost,
+  HttpException,
+  HttpStatus,
+  Logger,
+} from '@nestjs/common';
+import { Response } from 'express';
+import { AppException } from '../exceptions/app.exception';
+import { ExceptionCode } from '../enums/exception-code.enum';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
-    private readonly logger = new Logger(GlobalExceptionFilter.name);
+  private readonly logger = new Logger(GlobalExceptionFilter.name);
 
-    catch(exception: unknown, host: ArgumentsHost) {
-        const ctx = host.switchToHttp();
-        const response = ctx.getResponse<Response>();
+  catch(exception: unknown, host: ArgumentsHost) {
+    const ctx = host.switchToHttp();
+    const response = ctx.getResponse<Response>();
+    const request = ctx.getRequest();
 
-        let status = HttpStatus.INTERNAL_SERVER_ERROR;
-        let responseBody: IErrorResponse;
+    let status: number;
+    let message: string;
+    let code: number;
 
-        if (exception instanceof AppException) {
-            status = HttpStatus.BAD_REQUEST;
-            responseBody = {
-                code: exception.code,
-                message: exception.message,
-                data: null,
-            };
-        } else if (exception instanceof HttpException) {
-            status = exception.getStatus();
-            const exceptionResponse = exception.getResponse();
-
-            responseBody = {
-                code: status === HttpStatus.UNAUTHORIZED ? 1003 : 0,
-                message:
-                    typeof exceptionResponse === "string"
-                        ? exceptionResponse
-                        : (exceptionResponse as any).message || "HTTP Exception",
-                data: null,
-            };
-        } else {
-            // Log the full error details for debugging
-            this.logger.error("Unhandled exception:", exception);
-            responseBody = {
-                code: 1007,
-                message: "Internal server error",
-                data: null,
-            };
-        }
-
-        this.logger.error(
-            `HTTP Status: ${status} Error Message: ${responseBody.message}`,
-            exception instanceof Error ? exception.stack : exception
-        );
-
-        response.status(status).json(responseBody);
+    if (exception instanceof AppException) {
+      status = exception.getStatus();
+      message = exception.message;
+      code = exception.code;
+    } else if (exception instanceof HttpException) {
+      status = exception.getStatus();
+      message = exception.message;
+      code = this.getCodeFromHttpStatus(status);
+    } else {
+      status = HttpStatus.INTERNAL_SERVER_ERROR;
+      message = 'Internal server error';
+      code = ExceptionCode.INTERNAL_SERVER_ERROR;
     }
+
+    const errorResponse = {
+      code: 0, // Always 0 for errors
+      msg: message,
+      data: null,
+    };
+
+    this.logger.error(
+      `${request.method} ${request.url} - ${status} - ${message}`,
+      exception instanceof Error ? exception.stack : exception,
+    );
+
+    response.status(status).json(errorResponse);
+  }
+
+  private getCodeFromHttpStatus(status: number): number {
+    switch (status) {
+      case HttpStatus.BAD_REQUEST:
+        return ExceptionCode.BAD_REQUEST;
+      case HttpStatus.UNAUTHORIZED:
+        return ExceptionCode.UNAUTHORIZED;
+      case HttpStatus.FORBIDDEN:
+        return ExceptionCode.FORBIDDEN;
+      case HttpStatus.NOT_FOUND:
+        return ExceptionCode.NOT_FOUND;
+      case HttpStatus.CONFLICT:
+        return ExceptionCode.CONFLICT;
+      case HttpStatus.UNPROCESSABLE_ENTITY:
+        return ExceptionCode.VALIDATION_ERROR;
+      default:
+        return ExceptionCode.INTERNAL_SERVER_ERROR;
+    }
+  }
 }
