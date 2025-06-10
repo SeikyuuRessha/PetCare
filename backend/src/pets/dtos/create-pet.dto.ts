@@ -24,11 +24,7 @@ export class CreatePetDto {
     @IsOptional()
     @IsUrl()
     imageUrl?: string;
-
     @IsOptional()
     @IsString()
     identifyingMarks?: string;
-
-    @IsString()
-    ownerId: string;
 }

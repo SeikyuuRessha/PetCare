@@ -6,7 +6,12 @@ export const ExceptionCode = {
     FORBIDDEN: { code: 4003, message: "Forbidden access" },
     NOT_FOUND: { code: 4004, message: "Resource not found" },
     CONFLICT: { code: 4009, message: "Resource conflict" },
-    VALIDATION_ERROR: { code: 4022, message: "Validation failed" }, // Authentication errors
+    VALIDATION_ERROR: { code: 4022, message: "Validation failed" },
+
+    // Operation errors
+    INVALID_OPERATION: { code: 4023, message: "Invalid operation" },
+
+    // Authentication errors
     INVALID_CREDENTIALS: { code: 4101, message: "Invalid username or password" },
     TOKEN_EXPIRED: { code: 4102, message: "Token has expired" },
     TOKEN_INVALID: { code: 4103, message: "Invalid token provided" },
@@ -26,10 +31,11 @@ export const ExceptionCode = {
     // Appointment errors
     APPOINTMENT_NOT_FOUND: { code: 4401, message: "Appointment not found" },
     APPOINTMENT_CONFLICT: { code: 4402, message: "Appointment time conflict" },
-    INVALID_APPOINTMENT_TIME: { code: 4403, message: "Invalid appointment time" }, // Service errors
+    INVALID_APPOINTMENT_TIME: { code: 4403, message: "Invalid appointment time" },
+
+    // Service errors
     SERVICE_NOT_FOUND: { code: 4501, message: "Service not found" },
-    SERVICE_UNAVAILABLE: { code: 4502, message: "Service currently unavailable" },
-    SERVICE_OPTION_NOT_FOUND: { code: 4503, message: "Service option not found" },
+    SERVICE_OPTION_NOT_FOUND: { code: 4502, message: "Service option not found" },
     INVALID_SERVICE_DATA: { code: 4504, message: "Invalid service data provided" }, // Medical Record errors
     MEDICAL_RECORD_NOT_FOUND: { code: 4601, message: "Medical record not found" },
     PRESCRIPTION_NOT_FOUND: { code: 4602, message: "Prescription not found" },

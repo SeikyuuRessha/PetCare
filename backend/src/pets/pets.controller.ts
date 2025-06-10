@@ -10,16 +10,10 @@ import { CurrentUser } from "../auth/decorators/current-user.decorator";
 @Controller("pets")
 @UseGuards(AccessTokenGuard)
 export class PetsController {
-    constructor(private readonly petsService: PetsService) {}
-
-    // All authenticated users can create pets
+    constructor(private readonly petsService: PetsService) {} // All authenticated users can create pets
     @Post()
     create(@Body() createPetDto: CreatePetDto, @CurrentUser("userId") userId: string) {
-        // Set the owner to current user if not specified
-        if (!createPetDto.ownerId) {
-            createPetDto.ownerId = userId;
-        }
-        return this.petsService.create(createPetDto);
+        return this.petsService.create(createPetDto, userId);
     }
 
     // Only ADMIN and EMPLOYEE can view all pets

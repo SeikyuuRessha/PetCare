@@ -9,12 +9,11 @@ import { ExceptionCode } from "../common/exception/exception-code";
 @Injectable()
 export class PetsService {
     constructor(private readonly prisma: PrismaService) {}
-
-    async create(createPetDto: CreatePetDto) {
+    async create(createPetDto: CreatePetDto, ownerId: string) {
         return handleService(async () => {
             // Check if owner exists
             const owner = await this.prisma.user.findUnique({
-                where: { userId: createPetDto.ownerId },
+                where: { userId: ownerId },
             });
 
             if (!owner) {
@@ -22,7 +21,10 @@ export class PetsService {
             }
 
             return this.prisma.pet.create({
-                data: createPetDto,
+                data: {
+                    ...createPetDto,
+                    ownerId,
+                },
                 include: {
                     owner: {
                         select: {
@@ -99,7 +101,6 @@ export class PetsService {
             })
         );
     }
-
     async update(id: string, updatePetDto: UpdatePetDto) {
         return handleService(async () => {
             const pet = await this.prisma.pet.findUnique({
@@ -108,17 +109,6 @@ export class PetsService {
 
             if (!pet) {
                 throw new AppException(ExceptionCode.PET_NOT_FOUND);
-            }
-
-            // Check if new owner exists (if updating ownerId)
-            if (updatePetDto.ownerId && updatePetDto.ownerId !== pet.ownerId) {
-                const owner = await this.prisma.user.findUnique({
-                    where: { userId: updatePetDto.ownerId },
-                });
-
-                if (!owner) {
-                    throw new AppException(ExceptionCode.USER_NOT_FOUND);
-                }
             }
 
             return this.prisma.pet.update({

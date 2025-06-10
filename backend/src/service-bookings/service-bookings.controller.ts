@@ -5,6 +5,7 @@ import { UpdateServiceBookingDto } from "./dtos/update-service-booking.dto";
 import { AccessTokenGuard } from "../auth/guards/access-token.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
 import { Roles } from "../auth/decorators/roles.decorator";
+import { CurrentUser } from "../auth/decorators/current-user.decorator";
 
 @Controller("service-bookings")
 @UseGuards(AccessTokenGuard)
@@ -43,13 +44,15 @@ export class ServiceBookingsController {
     @Roles("EMPLOYEE", "ADMIN")
     update(@Param("id") id: string, @Body() updateServiceBookingDto: UpdateServiceBookingDto) {
         return this.serviceBookingsService.update(id, updateServiceBookingDto);
+    } // Users can cancel their own bookings, ADMIN can delete any booking
+    @Delete(":id")
+    remove(@Param("id") id: string, @CurrentUser("userId") userId: string, @CurrentUser("role") userRole: string) {
+        return this.serviceBookingsService.remove(id, userId, userRole);
     }
 
-    // Only ADMIN can delete service bookings
-    @Delete(":id")
-    @UseGuards(RolesGuard)
-    @Roles("ADMIN")
-    remove(@Param("id") id: string) {
-        return this.serviceBookingsService.remove(id);
+    // Add dedicated cancel endpoint for users
+    @Patch(":id/cancel")
+    cancelBooking(@Param("id") id: string, @CurrentUser("userId") userId: string) {
+        return this.serviceBookingsService.cancelBooking(id, userId);
     }
 }

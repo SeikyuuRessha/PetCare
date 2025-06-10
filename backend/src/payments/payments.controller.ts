@@ -51,7 +51,7 @@ export class PaymentsController {
     // Only ADMIN and EMPLOYEE can update payments
     @Patch(":id")
     @UseGuards(RolesGuard)
-    @Roles("ADMIN", "EMPLOYEE")
+    @Roles("USER")
     update(@Param("id") id: string, @Body() updatePaymentDto: UpdatePaymentDto) {
         return this.paymentsService.update(id, updatePaymentDto);
     }
@@ -59,7 +59,7 @@ export class PaymentsController {
     // Only ADMIN can delete payments
     @Delete(":id")
     @UseGuards(RolesGuard)
-    @Roles("ADMIN")
+    @Roles("USER", "ADMIN", "EMPLOYEE")
     remove(@Param("id") id: string) {
         return this.paymentsService.remove(id);
     }

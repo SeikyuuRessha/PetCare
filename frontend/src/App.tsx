@@ -1,5 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./index.css";
 
 // User Pages
@@ -15,20 +17,20 @@ import ViewBookedServicesPage from "./pages/UserPage/ViewBookedServicesPage";
 
 // Services Pages
 import CareServicesPage from "./pages/UserPage/CareServicesPage";
-import CareServices_GroomingPage from "./pages/servicesPage/CareServices_GroomingPage";
-import CareServices_PetBoardingPage from "./pages/servicesPage/CareServices_PetBoardingPage";
-import CareServices_PetTrainingPage from "./pages/servicesPage/CareServices_PetTrainingPage";
-import CareServices_PetBathingPage from "./pages/servicesPage/CareServices_PetBathingPage";
+import ServiceOptionsPage from "./pages/servicesPage/ServiceOptionsPage";
 
 // Doctor Pages
 import DoctorPage from "./pages/DoctorPage/DoctorPage";
 import DoctorMedicalRecordPage from "./pages/DoctorPage/DoctorMedicalRecordPage";
 import DoctorAppointmentPage from "./pages/DoctorPage/DoctorAppointmentPage";
+import DoctorMedicinesPage from "./pages/DoctorPage/DoctorMedicinesPage";
 
 // Admin & Employee Pages
 import AdminPage from "./pages/AdminPage/AdminPage";
 import AccountManagementPage from "./pages/AdminPage/AccountManagementPage";
 import EmployeePage from "./pages/EmployeePage/EmployeePage";
+import EmployeeMedicinesPage from "./pages/EmployeePage/EmployeeMedicinesPage";
+import EmployeeServiceOptionsPage from "./pages/EmployeePage/EmployeeServiceOptionsPage";
 import StatisticsPage from "./pages/AdminPage/StatisticsPage";
 import EmployeeAppointmentPage from "./pages/EmployeePage/EmployeeAppointmentPage";
 import PetRecordsPage from "./pages/EmployeePage/PetRecordsPage";
@@ -37,9 +39,10 @@ import ServiceManagementPage from "./pages/EmployeePage/ServiceManagementPage";
 function App() {
     return (
         <Router>
+            {" "}
             <Routes>
-                {/* Login is default route */}
-                <Route path="/" element={<LoginPage />} />
+                {/* Home is default route */}
+                <Route path="/" element={<HomePage />} />
                 <Route path="/home" element={<HomePage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
@@ -53,25 +56,10 @@ function App() {
                     element={<ViewBookedServicesPage />}
                 />
                 <Route path="/services" element={<CareServicesPage />} />
-
-                {/* Services Routes */}
                 <Route
-                    path="/services/grooming"
-                    element={<CareServices_GroomingPage />}
-                />
-                <Route
-                    path="/services/boarding"
-                    element={<CareServices_PetBoardingPage />}
-                />
-                <Route
-                    path="/services/training"
-                    element={<CareServices_PetTrainingPage />}
-                />
-                <Route
-                    path="/services/bathing"
-                    element={<CareServices_PetBathingPage />}
-                />
-
+                    path="/services/:serviceId/options"
+                    element={<ServiceOptionsPage />}
+                />{" "}
                 {/* Doctor Routes */}
                 <Route path="/doctor" element={<DoctorPage />} />
                 <Route
@@ -82,7 +70,10 @@ function App() {
                     path="/doctor/appointments"
                     element={<DoctorAppointmentPage />}
                 />
-
+                <Route
+                    path="/doctor/medicines"
+                    element={<DoctorMedicinesPage />}
+                />{" "}
                 {/* Admin & Employee Routes */}
                 <Route path="/admin" element={<AdminPage />} />
                 <Route
@@ -99,8 +90,29 @@ function App() {
                 <Route
                     path="/employee/services"
                     element={<ServiceManagementPage />}
+                />{" "}
+                <Route
+                    path="/employee/medicines"
+                    element={<EmployeeMedicinesPage />}
+                />
+                <Route
+                    path="/employee/service-options"
+                    element={<EmployeeServiceOptionsPage />}
                 />
             </Routes>
+            {/* Toast Container */}
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+            />
         </Router>
     );
 }

@@ -5,6 +5,7 @@ import { UpdateAppointmentDto } from "./dtos/update-appointment.dto";
 import { AccessTokenGuard } from "../auth/guards/access-token.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
 import { Roles } from "../auth/decorators/roles.decorator";
+import { CurrentUser } from "../auth/decorators/current-user.decorator";
 
 @Controller("appointments")
 @UseGuards(AccessTokenGuard)
@@ -25,6 +26,26 @@ export class AppointmentsController {
         return this.appointmentsService.findAll();
     }
 
+    // Get current user's appointments
+    @Get("my/appointments")
+    getMyAppointments(@CurrentUser("userId") userId: string) {
+        return this.appointmentsService.findByUser(userId);
+    }
+
+    // Users can view their own appointments by userId, DOCTOR/ADMIN can view any user's appointments
+    @Get("user/:userId")
+    findByUser(
+        @Param("userId") userId: string,
+        @CurrentUser("userId") currentUserId: string,
+        @CurrentUser("role") userRole: string
+    ) {
+        // Users can only view their own appointments, unless they are DOCTOR/ADMIN
+        if (userRole === "USER" && userId !== currentUserId) {
+            throw new Error("Access denied");
+        }
+        return this.appointmentsService.findByUser(userId);
+    }
+
     // DOCTOR/ADMIN/EMPLOYEE can view any appointment, USER can view own appointments
     @Get(":id")
     findOne(@Param("id") id: string) {
@@ -37,13 +58,21 @@ export class AppointmentsController {
         return this.appointmentsService.findByPet(petId);
     }
 
-    // DOCTOR and ADMIN can update any appointment, USER can update own appointments
+    // DOCTOR and ADMIN can update any appointment
     @Patch(":id")
+    @UseGuards(RolesGuard)
+    @Roles("DOCTOR", "ADMIN")
     update(@Param("id") id: string, @Body() updateAppointmentDto: UpdateAppointmentDto) {
         return this.appointmentsService.update(id, updateAppointmentDto);
     }
 
-    // DOCTOR and ADMIN can cancel appointments
+    // Allow users to cancel their own appointments
+    @Patch(":id/cancel")
+    cancelAppointment(@Param("id") id: string, @CurrentUser("userId") userId: string) {
+        return this.appointmentsService.cancelAppointment(id, userId);
+    }
+
+    // DOCTOR and ADMIN can remove appointments
     @Delete(":id")
     @UseGuards(RolesGuard)
     @Roles("DOCTOR", "ADMIN")
