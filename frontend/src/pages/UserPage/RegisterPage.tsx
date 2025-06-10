@@ -57,7 +57,7 @@ function RegisterPage() {
             <div className="w-1/2 bg-teal-700 flex items-center justify-center">
                 <div className="bg-white rounded-3xl overflow-hidden p-4">
                     <img
-                        src="https://i.imgur.com/5Z6L8gB.jpg"
+                        src="../public/images/image1.png"
                         alt="Happy Dog"
                         className="w-80 h-80 object-cover rounded-3xl"
                     />
@@ -82,7 +82,7 @@ function RegisterPage() {
                 <div className="flex flex-col items-center w-80">
                     <div className="flex items-center mb-6">
                         <img
-                            src="https://i.imgur.com/HWm9hA9.png"
+                            src="../public/images/Group.svg"
                             alt="PetHealthy Logo"
                             className="w-12 h-12 mr-2"
                         />

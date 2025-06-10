@@ -25,7 +25,7 @@ export default function DoctorPage() {
                     <div className="flex-shrink-0">
                         <div className="rounded-[32px] border-2 border-black overflow-hidden w-[350px] h-[350px] flex items-center justify-center bg-white">
                             <img
-                                src="/doctor-doraemon.jpg"
+                                src="../public/images/staff3.jpg"
                                 alt="Doctor"
                                 className="object-cover w-full h-full"
                             />

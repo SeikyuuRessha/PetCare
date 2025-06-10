@@ -6,7 +6,7 @@ export default function Footer() {
       <div className="flex flex-col md:flex-row justify-between max-w-6xl mx-auto px-16">
         <div className="mb-8 md:mb-0">
           <div className="flex items-center space-x-2 mb-2">
-            <img src="/logo.png" alt="PetHealthy Logo" className="h-8" />
+            <img src="../public/images/Group.svg" alt="PetHealthy Logo" className="h-8" />
             <span className="font-bold text-[#7bb12b] text-2xl">PETHEALTHY</span>
           </div>
           <p className="text-gray-600 mt-2 max-w-xs">
