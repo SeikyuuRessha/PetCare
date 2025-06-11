@@ -9,18 +9,14 @@ import { Roles } from "../auth/decorators/roles.decorator";
 @Controller("medical-records")
 @UseGuards(AccessTokenGuard, RolesGuard)
 export class MedicalRecordsController {
-    constructor(private readonly medicalRecordsService: MedicalRecordsService) {}
-
-    // Only DOCTOR and ADMIN can create medical records
+    constructor(private readonly medicalRecordsService: MedicalRecordsService) {} // DOCTOR, ADMIN and EMPLOYEE can create medical records
     @Post()
-    @Roles("DOCTOR", "ADMIN")
+    @Roles("DOCTOR", "ADMIN", "EMPLOYEE")
     create(@Body() createMedicalRecordDto: CreateMedicalRecordDto) {
         return this.medicalRecordsService.create(createMedicalRecordDto);
-    }
-
-    // Only DOCTOR and ADMIN can view all medical records
+    } // DOCTOR, ADMIN and EMPLOYEE can view all medical records
     @Get()
-    @Roles("DOCTOR", "ADMIN")
+    @Roles("DOCTOR", "ADMIN", "EMPLOYEE")
     findAll() {
         return this.medicalRecordsService.findAll();
     }
@@ -37,11 +33,9 @@ export class MedicalRecordsController {
     @Roles("DOCTOR", "ADMIN")
     findByDoctor(@Param("doctorId") doctorId: string) {
         return this.medicalRecordsService.findByDoctor(doctorId);
-    }
-
-    // Only DOCTOR and ADMIN can update medical records
+    } // DOCTOR, ADMIN and EMPLOYEE can update medical records
     @Patch(":id")
-    @Roles("DOCTOR", "ADMIN")
+    @Roles("DOCTOR", "ADMIN", "EMPLOYEE")
     update(@Param("id") id: string, @Body() updateMedicalRecordDto: UpdateMedicalRecordDto) {
         return this.medicalRecordsService.update(id, updateMedicalRecordDto);
     }

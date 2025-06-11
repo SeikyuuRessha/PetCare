@@ -9,7 +9,6 @@ import { ExceptionCode } from "../common/exception/exception-code";
 @Injectable()
 export class MedicalRecordsService {
     constructor(private readonly prisma: PrismaService) {}
-
     async create(createMedicalRecordDto: CreateMedicalRecordDto) {
         return handleService(async () => {
             // Check if doctor exists
@@ -30,7 +29,22 @@ export class MedicalRecordsService {
                 if (!appointment) {
                     throw new AppException(ExceptionCode.APPOINTMENT_NOT_FOUND);
                 }
+
+                // Check if medical record already exists for this appointment
+                const existingRecord = await this.prisma.medicalRecord.findUnique({
+                    where: { appointmentId: createMedicalRecordDto.appointmentId },
+                });
+
+                if (existingRecord) {
+                    // Instead of throwing error, update the existing record
+                    return this.update(existingRecord.recordId, {
+                        doctorId: createMedicalRecordDto.doctorId,
+                        diagnosis: createMedicalRecordDto.diagnosis,
+                        nextCheckupDate: createMedicalRecordDto.nextCheckupDate,
+                    });
+                }
             }
+
             const data = { ...createMedicalRecordDto };
             if (createMedicalRecordDto.nextCheckupDate) {
                 data.nextCheckupDate = createMedicalRecordDto.nextCheckupDate;

@@ -36,12 +36,7 @@ export interface PrescriptionDetail {
 
 export interface CreatePrescriptionDetailDto {
     prescriptionId: string;
-    medicationPackageId: string;
-    quantity: number;
-    dosage: string;
-    frequency: string;
-    duration: string;
-    notes?: string;
+    packageId: string; // Changed from medicationPackageId to match backend
 }
 
 export interface PrescriptionDetailSummary {
@@ -198,20 +193,12 @@ export const prescriptionDetailService = {
         return `${detail.dosage} - ${detail.frequency} - ${detail.duration}${
             detail.notes ? ` (${detail.notes})` : ""
         }`;
-    },
-
-    // Helper method to validate prescription detail data
+    }, // Helper method to validate prescription detail data
     validatePrescriptionDetail(data: CreatePrescriptionDetailDto): string[] {
         const errors: string[] = [];
 
         if (!data.prescriptionId) errors.push("Prescription ID is required");
-        if (!data.medicationPackageId)
-            errors.push("Medication package ID is required");
-        if (!data.quantity || data.quantity <= 0)
-            errors.push("Quantity must be greater than 0");
-        if (!data.dosage) errors.push("Dosage is required");
-        if (!data.frequency) errors.push("Frequency is required");
-        if (!data.duration) errors.push("Duration is required");
+        if (!data.packageId) errors.push("Package ID is required");
 
         return errors;
     },

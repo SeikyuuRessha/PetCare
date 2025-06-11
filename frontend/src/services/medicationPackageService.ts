@@ -37,14 +37,15 @@ export const medicationPackageService = {
                     "Failed to create medication package"
             );
         }
-    },
-
-    // Get all medication packages (DOCTOR, ADMIN only)
+    }, // Get all medication packages (DOCTOR, ADMIN only)
     async getAll(): Promise<MedicationPackage[]> {
         try {
             const response = await api.get("/medication-packages");
-            return response.data;
+            // Handle different response structures
+            const data = response.data?.data || response.data;
+            return Array.isArray(data) ? data : [];
         } catch (error: any) {
+            console.error("Error fetching medication packages:", error);
             throw new Error(
                 error?.response?.data?.message ||
                     "Failed to fetch medication packages"
@@ -63,16 +64,20 @@ export const medicationPackageService = {
                     "Failed to fetch medication package"
             );
         }
-    },
-
-    // Get medication packages by medicine ID (DOCTOR, ADMIN only)
+    }, // Get medication packages by medicine ID (DOCTOR, ADMIN only)
     async getByMedicine(medicineId: string): Promise<MedicationPackage[]> {
         try {
             const response = await api.get(
                 `/medication-packages/medicine/${medicineId}`
             );
-            return response.data;
+            // Handle the response structure from handleService
+            const data = response.data?.data || response.data;
+            return Array.isArray(data) ? data : [];
         } catch (error: any) {
+            console.error(
+                "Error fetching medication packages for medicine:",
+                error
+            );
             throw new Error(
                 error?.response?.data?.message ||
                     "Failed to fetch medication packages for medicine"

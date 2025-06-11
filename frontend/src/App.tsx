@@ -29,12 +29,11 @@ import DoctorMedicinesPage from "./pages/DoctorPage/DoctorMedicinesPage";
 import AdminPage from "./pages/AdminPage/AdminPage";
 import AccountManagementPage from "./pages/AdminPage/AccountManagementPage";
 import EmployeePage from "./pages/EmployeePage/EmployeePage";
-import EmployeeMedicinesPage from "./pages/EmployeePage/EmployeeMedicinesPage";
-import EmployeeServiceOptionsPage from "./pages/EmployeePage/EmployeeServiceOptionsPage";
 import StatisticsPage from "./pages/AdminPage/StatisticsPage";
 import EmployeeAppointmentPage from "./pages/EmployeePage/EmployeeAppointmentPage";
 import PetRecordsPage from "./pages/EmployeePage/PetRecordsPage";
 import ServiceManagementPage from "./pages/EmployeePage/ServiceManagementPage";
+import EmployeeServicesPage from "./pages/EmployeePage/EmployeeServicesPage";
 
 function App() {
     return (
@@ -86,18 +85,10 @@ function App() {
                 <Route
                     path="/employee/appointments"
                     element={<EmployeeAppointmentPage />}
-                />
-                <Route
-                    path="/employee/services"
-                    element={<ServiceManagementPage />}
                 />{" "}
                 <Route
-                    path="/employee/medicines"
-                    element={<EmployeeMedicinesPage />}
-                />
-                <Route
-                    path="/employee/service-options"
-                    element={<EmployeeServiceOptionsPage />}
+                    path="/employee/services"
+                    element={<EmployeeServicesPage />}
                 />
             </Routes>
             {/* Toast Container */}

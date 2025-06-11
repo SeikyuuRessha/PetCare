@@ -23,7 +23,7 @@ export class UsersService {
             }
 
             // Check if email already exists (if provided)
-            if (createUserDto.email) {
+            if (createUserDto.email && createUserDto.email.trim() !== "") {
                 const existingEmail = await this.prisma.user.findUnique({
                     where: { email: createUserDto.email },
                 });

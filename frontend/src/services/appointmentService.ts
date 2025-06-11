@@ -14,13 +14,18 @@ export interface Appointment {
         species: string;
         breed?: string;
         gender?: string;
+        owner?: {
+            userId: string;
+            fullName: string;
+            phone: string;
+            email: string;
+        };
     };
     doctor?: {
         userId: string;
         fullName: string;
         username: string;
     };
-    notes?: string;
     reason?: string; // Keep for backward compatibility
     createdAt?: string;
 }
@@ -71,14 +76,10 @@ export const appointmentService = {
             return response.data.data.items || response.data.data || [];
         }
         return response.data || [];
-    },
-
-    // Update appointment (DOCTOR/ADMIN can update status and notes)
+    }, // Update appointment (DOCTOR/ADMIN/EMPLOYEE can update status and symptoms)
     updateAppointment: async (
         id: string,
-        data: Partial<
-            CreateAppointmentData & { status?: string; notes?: string }
-        >
+        data: Partial<CreateAppointmentData & { status?: string }>
     ): Promise<Appointment> => {
         const response = await api.patch(`/appointments/${id}`, data);
         return response.data.data;

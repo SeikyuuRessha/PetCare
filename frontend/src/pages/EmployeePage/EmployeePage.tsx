@@ -49,28 +49,10 @@ export default function EmployeePage() {
                     <div className="flex flex-col md:flex-row gap-16 mb-8">
                         <button
                             onClick={() => navigate("/employee/services")}
-                            className="bg-[#d6c400] text-white text-4xl rounded-2xl px-16 py-10 shadow-md border border-black hover:bg-[#e6d700] transition min-w-[420px] mb-8 md:mb-0"
+                            className="bg-[#d6c400] text-white text-4xl rounded-2xl px-16 py-10 shadow-md border border-black hover:bg-[#e6d700] transition min-w-[420px]"
                             style={{ boxShadow: "2px 4px 8px #8888" }}
                         >
                             Quản Lí Dịch Vụ
-                        </button>
-                        <button
-                            onClick={() => navigate("/employee/medicines")}
-                            className="bg-[#ff6b35] text-white text-4xl rounded-2xl px-16 py-10 shadow-md border border-black hover:bg-[#e55a30] transition min-w-[420px]"
-                            style={{ boxShadow: "2px 4px 8px #8888" }}
-                        >
-                            Quản Lý Thuốc
-                        </button>
-                    </div>
-                    <div className="flex flex-col md:flex-row gap-16 mb-8">
-                        <button
-                            onClick={() =>
-                                navigate("/employee/service-options")
-                            }
-                            className="bg-[#8e44ad] text-white text-4xl rounded-2xl px-16 py-10 shadow-md border border-black hover:bg-[#732d8a] transition min-w-[420px] mb-8 md:mb-0"
-                            style={{ boxShadow: "2px 4px 8px #8888" }}
-                        >
-                            Quản Lý Tùy Chọn Dịch Vụ
                         </button>
                     </div>
                 </div>

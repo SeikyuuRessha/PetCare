@@ -1,9 +1,34 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { logout } from "../../utils/auth";
+import { logout, getUser } from "../../utils/auth";
+import { userService, User } from "../../services/userService";
 
 export default function DoctorPage() {
     const navigate = useNavigate();
+    const [doctorInfo, setDoctorInfo] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        loadDoctorInfo();
+    }, []);
+    const loadDoctorInfo = async () => {
+        try {
+            setLoading(true);
+            // Use getUser() directly since we only need current user's info
+            const currentUser = getUser();
+            if (currentUser) {
+                setDoctorInfo(currentUser);
+            }
+        } catch (error: any) {
+            console.error("Failed to load doctor info:", error);
+            if (error?.response?.status === 401) {
+                await logout();
+                navigate("/login");
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleLogout = async () => {
         await logout();
@@ -30,45 +55,63 @@ export default function DoctorPage() {
                                 className="object-cover w-full h-full"
                             />
                         </div>
-                    </div>
-
+                    </div>{" "}
                     {/* Doctor Info */}
                     <div className="bg-[#ededed] border border-black rounded-lg px-10 py-8 min-w-[400px]">
-                        <h2 className="text-3xl font-semibold mb-6">
-                            Bác Sĩ : Trịnh Minh Đạt
-                        </h2>
-                        <div className="space-y-3 text-lg">
-                            <div className="flex">
-                                <span className="w-40 font-medium">
-                                    Chuyên Khoa :
+                        {loading ? (
+                            <div className="flex items-center justify-center py-8">
+                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#7bb12b]"></div>
+                                <span className="ml-2">
+                                    Đang tải thông tin...
                                 </span>
-                                <span>Chuyên gia về bệnh lý động vật</span>
                             </div>
-                            <div className="flex">
-                                <span className="w-40 font-medium">
-                                    Bằng cấp :
-                                </span>
-                                <span>Thạc sĩ Thú y</span>
-                            </div>
-                            <div className="flex">
-                                <span className="w-40 font-medium">
-                                    Kinh nghiệm :
-                                </span>
-                                <span>6 năm</span>
-                            </div>
-                            <div className="flex">
-                                <span className="w-40 font-medium">
-                                    Giờ làm việc :
-                                </span>
-                                <span>8h - 17h ( Thứ 2-Thứ 6)</span>
-                            </div>
-                            <div className="flex">
-                                <span className="w-40 font-medium">
-                                    Số điện thoại :
-                                </span>
-                                <span>0999999999</span>
-                            </div>
-                        </div>
+                        ) : (
+                            <>
+                                <h2 className="text-3xl font-semibold mb-6">
+                                    Bác Sĩ: {doctorInfo?.fullName || "N/A"}
+                                </h2>
+                                <div className="space-y-3 text-lg">
+                                    <div className="flex">
+                                        <span className="w-40 font-medium">
+                                            Username:
+                                        </span>
+                                        <span>
+                                            {doctorInfo?.username || "N/A"}
+                                        </span>
+                                    </div>
+                                    <div className="flex">
+                                        <span className="w-40 font-medium">
+                                            Email:
+                                        </span>
+                                        <span>
+                                            {doctorInfo?.email || "N/A"}
+                                        </span>
+                                    </div>
+                                    <div className="flex">
+                                        <span className="w-40 font-medium">
+                                            Số điện thoại:
+                                        </span>
+                                        <span>
+                                            {doctorInfo?.phone || "N/A"}
+                                        </span>
+                                    </div>
+                                    <div className="flex">
+                                        <span className="w-40 font-medium">
+                                            Địa chỉ:
+                                        </span>
+                                        <span>
+                                            {doctorInfo?.address || "N/A"}
+                                        </span>
+                                    </div>
+                                    <div className="flex">
+                                        <span className="w-40 font-medium">
+                                            Vai trò:
+                                        </span>
+                                        <span>{doctorInfo?.role || "N/A"}</span>
+                                    </div>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
 

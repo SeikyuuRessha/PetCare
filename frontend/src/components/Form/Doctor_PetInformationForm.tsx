@@ -7,8 +7,16 @@ import {
     prescriptionService,
     CreatePrescriptionData,
 } from "../../services/prescriptionService";
+import { prescriptionDetailService } from "../../services/prescriptionDetailService";
 import { medicineService, Medicine } from "../../services/medicineService";
+import {
+    medicationPackageService,
+    MedicationPackage,
+    CreateMedicationPackageDto,
+    UpdateMedicationPackageDto,
+} from "../../services/medicationPackageService";
 import { toast } from "react-toastify";
+import { getUser } from "../../utils/auth";
 
 interface DoctorPetInformationFormProps {
     pet: {
@@ -19,12 +27,18 @@ interface DoctorPetInformationFormProps {
         breed: string;
         imageUrl: string;
     };
+    appointmentId?: string;
+    existingMedicalRecord?: any; // Medical record to edit if exists
     onClose: () => void;
+    onSuccess?: () => void; // Callback when save is successful
 }
 
 export default function Doctor_PetInformationForm({
     pet,
+    appointmentId,
+    existingMedicalRecord,
     onClose,
+    onSuccess,
 }: DoctorPetInformationFormProps) {
     const [gender] = useState<"Đực" | "Cái">("Đực");
     const [health, setHealth] = useState("");
@@ -35,21 +49,50 @@ export default function Doctor_PetInformationForm({
     const [prescriptions, setPrescriptions] = useState([
         {
             medicineId: "",
+            packageId: "",
             name: "",
-            dosage: "",
-            frequency: "",
-            duration: "",
+            dosage: "Theo gói thuốc",
+            frequency: "Theo gói thuốc",
+            duration: "Theo gói thuốc",
             instructions: "",
         },
     ]);
     const [medicines, setMedicines] = useState<Medicine[]>([]);
+    const [availablePackages, setAvailablePackages] = useState<
+        MedicationPackage[]
+    >([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
+    // CRUD modal states for medication packages
+    const [showPackageModal, setShowPackageModal] = useState(false);
+    const [editingPackage, setEditingPackage] =
+        useState<MedicationPackage | null>(null);
+    const [packageForm, setPackageForm] = useState<CreateMedicationPackageDto>({
+        medicineId: "",
+        quantity: 0,
+        instruction: "",
+    });
+    const [allPackages, setAllPackages] = useState<MedicationPackage[]>([]);
+
     useEffect(() => {
         loadMedicines();
-    }, []);
+        loadAllPackages();
+
+        // Load existing medical record data if editing
+        if (existingMedicalRecord) {
+            setDiagnosis(existingMedicalRecord.diagnosis || "");
+            setNextExam(
+                existingMedicalRecord.nextCheckupDate
+                    ? new Date(existingMedicalRecord.nextCheckupDate)
+                          .toISOString()
+                          .split("T")[0]
+                    : ""
+            );
+            loadExistingPrescriptions(existingMedicalRecord);
+        }
+    }, [existingMedicalRecord]);
 
     const loadMedicines = async () => {
         try {
@@ -61,37 +104,158 @@ export default function Doctor_PetInformationForm({
         }
     };
 
+    const loadAllPackages = async () => {
+        try {
+            const packages = await medicationPackageService.getAll();
+            setAllPackages(packages);
+        } catch (error) {
+            console.error("Error loading medication packages:", error);
+        }
+    };
+
+    const loadPackagesForMedicine = async (medicineId: string) => {
+        try {
+            if (medicineId) {
+                const packages = await medicationPackageService.getByMedicine(
+                    medicineId
+                );
+                setAvailablePackages(packages);
+            } else {
+                setAvailablePackages([]);
+            }
+        } catch (error) {
+            console.error("Error loading medication packages:", error);
+            setAvailablePackages([]);
+        }
+    };
     const handlePrescriptionChange = (
         idx: number,
         field: string,
         value: string
     ) => {
         setPrescriptions((prescriptions) =>
-            prescriptions.map((item, i) =>
-                i === idx ? { ...item, [field]: value } : item
-            )
+            prescriptions.map((item, i) => {
+                if (i === idx) {
+                    const updated = { ...item, [field]: value };
+
+                    // If medicine changed, load packages and reset package selection
+                    if (field === "medicineId") {
+                        updated.packageId = "";
+                        updated.dosage = "Theo gói thuốc";
+                        updated.frequency = "Theo gói thuốc";
+                        updated.duration = "Theo gói thuốc";
+                        loadPackagesForMedicine(value);
+                    }
+
+                    // If package changed, update dosage info from package
+                    if (field === "packageId") {
+                        const selectedPackage = availablePackages.find(
+                            (p) => p.packageId === value
+                        );
+                        if (selectedPackage) {
+                            updated.dosage = `${selectedPackage.quantity} ${
+                                selectedPackage.medicine?.unit || "units"
+                            }`;
+                            updated.frequency =
+                                selectedPackage.instruction ||
+                                "Theo chỉ định bác sĩ";
+                            updated.duration = "Theo chỉ định bác sĩ";
+                        }
+                    }
+
+                    return updated;
+                }
+                return item;
+            })
         );
     };
+
     const addPrescription = () => {
         setPrescriptions([
             ...prescriptions,
             {
                 medicineId: "",
+                packageId: "",
                 name: "",
-                dosage: "",
-                frequency: "",
-                duration: "",
+                dosage: "Theo gói thuốc",
+                frequency: "Theo gói thuốc",
+                duration: "Theo gói thuốc",
                 instructions: "",
             },
         ]);
     };
-
     const removePrescription = (idx: number) => {
         setPrescriptions((prescriptions) =>
             prescriptions.filter((_, i) => i !== idx)
         );
     };
 
+    // Package CRUD handlers
+    const handleCreatePackage = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            if (editingPackage) {
+                await medicationPackageService.update(
+                    editingPackage.packageId,
+                    packageForm as UpdateMedicationPackageDto
+                );
+                setSuccess("Cập nhật gói thuốc thành công!");
+            } else {
+                await medicationPackageService.create(packageForm);
+                setSuccess("Thêm gói thuốc thành công!");
+            }
+
+            // Reload packages
+            await loadAllPackages();
+            if (packageForm.medicineId) {
+                await loadPackagesForMedicine(packageForm.medicineId);
+            }
+
+            resetPackageForm();
+            setTimeout(() => setSuccess(""), 3000);
+        } catch (error: any) {
+            setError(error.message || "Failed to save package");
+            setTimeout(() => setError(""), 3000);
+        }
+    };
+
+    const handleEditPackage = (pkg: MedicationPackage) => {
+        setEditingPackage(pkg);
+        setPackageForm({
+            medicineId: pkg.medicineId,
+            quantity: pkg.quantity,
+            instruction: pkg.instruction || "",
+        });
+        setShowPackageModal(true);
+    };
+
+    const handleDeletePackage = async (
+        packageId: string,
+        medicineId: string
+    ) => {
+        if (window.confirm("Bạn có chắc chắn muốn xóa gói thuốc này?")) {
+            try {
+                await medicationPackageService.delete(packageId);
+                setSuccess("Xóa gói thuốc thành công!");
+                await loadAllPackages();
+                await loadPackagesForMedicine(medicineId);
+                setTimeout(() => setSuccess(""), 3000);
+            } catch (error: any) {
+                setError(error.message || "Failed to delete package");
+                setTimeout(() => setError(""), 3000);
+            }
+        }
+    };
+
+    const resetPackageForm = () => {
+        setShowPackageModal(false);
+        setEditingPackage(null);
+        setPackageForm({
+            medicineId: "",
+            quantity: 0,
+            instruction: "",
+        });
+    };
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -99,57 +263,301 @@ export default function Doctor_PetInformationForm({
         setSuccess("");
 
         try {
-            // Create medical record
+            // Get current user (doctor) from auth
+            const currentUser = getUser();
+            if (!currentUser || currentUser.role !== "DOCTOR") {
+                setError("Bạn không có quyền tạo hồ sơ y tế");
+                setLoading(false);
+                return;
+            }
+
+            // Validate required fields
+            if (!diagnosis.trim()) {
+                setError("Vui lòng nhập chẩn đoán");
+                setLoading(false);
+                return;
+            }
+
+            console.log("Current user:", currentUser); // Debug log
+
+            // Create medical record - use userId if available, fallback to id
+            const doctorId = currentUser.userId || currentUser.id;
+            if (!doctorId) {
+                setError("Không thể xác định thông tin bác sĩ");
+                setLoading(false);
+                return;
+            }
+
             const medicalRecordData: CreateMedicalRecordData = {
-                doctorId: "current-doctor-id", // TODO: Get from auth context
-                appointmentId: "current-appointment-id", // TODO: Get from props/context
-                diagnosis: diagnosis,
+                doctorId: doctorId,
+                appointmentId: appointmentId || undefined,
+                diagnosis: diagnosis.trim(),
                 nextCheckupDate: nextExam
                     ? new Date(nextExam).toISOString()
                     : undefined,
             };
+            console.log("Medical record data:", medicalRecordData); // Debug log            // Step 1: Create or update medical record
+            let medicalRecord;
 
-            const medicalRecord =
-                await medicalRecordService.createMedicalRecord(
-                    medicalRecordData
+            if (existingMedicalRecord) {
+                // Update existing medical record
+                console.log(
+                    "Updating existing medical record:",
+                    existingMedicalRecord.recordId
                 );
+                medicalRecord = await medicalRecordService.updateMedicalRecord(
+                    existingMedicalRecord.recordId,
+                    {
+                        diagnosis: diagnosis.trim(),
+                        nextCheckupDate: nextExam
+                            ? new Date(nextExam).toISOString()
+                            : undefined,
+                    }
+                );
+                console.log("Updated medical record:", medicalRecord);
+            } else {
+                // Create new medical record
+                try {
+                    medicalRecord =
+                        await medicalRecordService.createMedicalRecord(
+                            medicalRecordData
+                        );
+                    console.log("Created medical record:", medicalRecord);
+                } catch (medicalRecordError: any) {
+                    console.error(
+                        "Error creating medical record:",
+                        medicalRecordError
+                    );
 
-            // Create prescriptions if any
+                    // If it's a unique constraint error, try to update instead
+                    if (
+                        medicalRecordError?.response?.data?.originalError?.includes(
+                            "Unique constraint failed"
+                        ) ||
+                        medicalRecordError?.response?.data?.message?.includes(
+                            "already exists"
+                        )
+                    ) {
+                        console.log(
+                            "Medical record already exists, trying to get existing record..."
+                        );
+
+                        const allRecords =
+                            await medicalRecordService.getAllMedicalRecords();
+                        const existingRecord = allRecords.find(
+                            (record) => record.appointmentId === appointmentId
+                        );
+
+                        if (existingRecord) {
+                            medicalRecord =
+                                await medicalRecordService.updateMedicalRecord(
+                                    existingRecord.recordId,
+                                    {
+                                        diagnosis: diagnosis.trim(),
+                                        nextCheckupDate: nextExam
+                                            ? new Date(nextExam).toISOString()
+                                            : undefined,
+                                    }
+                                );
+                            console.log(
+                                "Updated existing medical record:",
+                                medicalRecord
+                            );
+                        } else {
+                            throw new Error(
+                                "Không thể tạo hoặc tìm thấy hồ sơ y tế cho cuộc hẹn này"
+                            );
+                        }
+                    } else {
+                        throw medicalRecordError;
+                    }
+                }
+            } // Step 2: Handle prescriptions
             const validPrescriptions = prescriptions.filter(
-                (p) => p.medicineId && p.dosage && p.frequency && p.duration
+                (p) => p.medicineId && p.packageId
             );
 
             if (validPrescriptions.length > 0) {
-                const prescriptionData: CreatePrescriptionData = {
-                    medicalRecordId: medicalRecord.recordId, // Use correct field name
-                    instructions: `Prescriptions: ${validPrescriptions
-                        .map(
-                            (p) =>
-                                `${p.name} - ${p.frequency} for ${p.duration} days`
-                        )
-                        .join("; ")}`,
-                    prescriptionDetails: validPrescriptions.map((p) => ({
-                        medicineId: p.medicineId,
-                        dosage: p.dosage,
-                        frequency: p.frequency,
-                        duration: p.duration,
-                        instructions: p.instructions,
-                    })),
-                };
+                let prescription;
 
-                await prescriptionService.createPrescription(prescriptionData);
+                if (existingMedicalRecord?.prescription) {
+                    // Update existing prescription - first delete all existing prescription details
+                    console.log(
+                        "Updating existing prescription:",
+                        existingMedicalRecord.prescription.prescriptionId
+                    );
+
+                    try {
+                        // Get existing prescription details
+                        const existingDetails =
+                            await prescriptionDetailService.getByPrescription(
+                                existingMedicalRecord.prescription
+                                    .prescriptionId
+                            );
+                        // Delete existing prescription details
+                        for (const detail of existingDetails) {
+                            await prescriptionDetailService.delete(
+                                detail.prescriptionId,
+                                detail.medicationPackage?.id || ""
+                            );
+                        }
+
+                        prescription = existingMedicalRecord.prescription;
+                    } catch (error) {
+                        console.error(
+                            "Error updating existing prescription:",
+                            error
+                        );
+                        // If error, try to create new prescription
+                        const prescriptionData = {
+                            recordId: medicalRecord.recordId,
+                        };
+                        prescription =
+                            await prescriptionService.createPrescription(
+                                prescriptionData
+                            );
+                    }
+                } else {
+                    // Create new prescription
+                    const prescriptionData = {
+                        recordId: medicalRecord.recordId,
+                    };
+
+                    console.log(
+                        "Creating prescription with data:",
+                        prescriptionData
+                    );
+                    prescription = await prescriptionService.createPrescription(
+                        prescriptionData
+                    );
+                    console.log("Created prescription:", prescription);
+                }
+
+                // Step 3: Create prescription details for each selected package
+                for (const p of validPrescriptions) {
+                    const prescriptionDetailData = {
+                        prescriptionId: prescription.prescriptionId,
+                        packageId: p.packageId,
+                    };
+
+                    console.log(
+                        "Creating prescription detail:",
+                        prescriptionDetailData
+                    );
+                    await prescriptionDetailService.create(
+                        prescriptionDetailData
+                    );
+                }
+            } else if (existingMedicalRecord?.prescription) {
+                // If no valid prescriptions but had existing prescription, delete all prescription details
+                console.log(
+                    "Removing all prescriptions for existing medical record"
+                );
+                try {
+                    const existingDetails =
+                        await prescriptionDetailService.getByPrescription(
+                            existingMedicalRecord.prescription.prescriptionId
+                        );
+                    for (const detail of existingDetails) {
+                        await prescriptionDetailService.delete(
+                            detail.prescriptionId,
+                            detail.medicationPackage?.id || ""
+                        );
+                    }
+                } catch (error) {
+                    console.error(
+                        "Error removing existing prescriptions:",
+                        error
+                    );
+                }
+            }
+            const successMessage = existingMedicalRecord
+                ? "Medical record updated successfully!"
+                : "Medical record created successfully!";
+            const toastMessage = existingMedicalRecord
+                ? "Cập nhật hồ sơ y tế thành công!"
+                : "Tạo hồ sơ y tế thành công!";
+            setSuccess(successMessage);
+            toast.success(toastMessage);
+
+            // Call onSuccess callback to reload data
+            if (onSuccess) {
+                onSuccess();
             }
 
-            setSuccess("Medical record saved successfully!");
-            toast.success("Lưu hồ sơ y tế thành công!");
             setTimeout(() => {
                 onClose();
             }, 2000);
         } catch (error: any) {
-            setError(error.message || "Failed to save medical record");
-            toast.error("Không thể lưu hồ sơ y tế");
+            console.error("Error creating medical record:", error);
+            console.error("Error response:", error.response?.data);
+
+            const errorMessage =
+                error.response?.data?.message ||
+                error.message ||
+                "Failed to save medical record";
+            setError(errorMessage);
+            toast.error(errorMessage);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const loadExistingPrescriptions = async (medicalRecord: any) => {
+        try {
+            if (medicalRecord?.prescription) {
+                console.log(
+                    "Loading existing prescriptions for medical record:",
+                    medicalRecord.recordId
+                );
+
+                // Get prescription details for this medical record
+                const prescriptionDetails =
+                    await prescriptionDetailService.getByPrescription(
+                        medicalRecord.prescription.prescriptionId
+                    );
+
+                console.log(
+                    "Found existing prescription details:",
+                    prescriptionDetails
+                );
+                // Convert prescription details to form format
+                const existingPrescriptions = prescriptionDetails.map(
+                    (detail) => ({
+                        medicineId: detail.medicationPackage?.medicineId || "",
+                        packageId: detail.medicationPackage?.id || "",
+                        name: detail.medicationPackage?.medicine?.name || "",
+                        dosage: `${detail.medicationPackage?.quantity || 0} ${
+                            detail.medicationPackage?.medicine?.unit || "units"
+                        }`,
+                        frequency:
+                            detail.medicationPackage?.instructions ||
+                            "Theo chỉ định bác sĩ",
+                        duration: "Theo gói thuốc",
+                        instructions: "",
+                    })
+                );
+
+                if (existingPrescriptions.length > 0) {
+                    setPrescriptions(existingPrescriptions);
+                } else {
+                    // If no existing prescriptions, keep default empty one
+                    setPrescriptions([
+                        {
+                            medicineId: "",
+                            packageId: "",
+                            name: "",
+                            dosage: "Theo gói thuốc",
+                            frequency: "Theo gói thuốc",
+                            duration: "Theo gói thuốc",
+                            instructions: "",
+                        },
+                    ]);
+                }
+            }
+        } catch (error) {
+            console.error("Error loading existing prescriptions:", error);
+            // If there's an error, keep default prescription state
         }
     };
 
@@ -408,10 +816,19 @@ export default function Doctor_PetInformationForm({
                         </div>{" "}
                         {/* Prescription Table */}
                         <div className="mt-8 w-full overflow-x-auto">
-                            <label className="block font-medium mb-2">
-                                Đơn thuốc{" "}
-                                <span className="text-green-700">*</span>
-                            </label>
+                            <div className="flex justify-between items-center mb-2">
+                                <label className="block font-medium">
+                                    Đơn thuốc{" "}
+                                    <span className="text-green-700">*</span>
+                                </label>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPackageModal(true)}
+                                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-sm"
+                                >
+                                    Quản lý gói thuốc
+                                </button>
+                            </div>
                             <div className="overflow-x-auto">
                                 <table className="min-w-full border-separate border-spacing-0">
                                     <thead>
@@ -424,16 +841,10 @@ export default function Doctor_PetInformationForm({
                                                 Thuốc
                                             </th>
                                             <th className="px-3 py-2 border-r border-white">
-                                                Liều lượng
-                                            </th>
-                                            <th className="px-3 py-2 border-r border-white">
-                                                Tần suất
-                                            </th>
-                                            <th className="px-3 py-2 border-r border-white">
-                                                Thời gian (ngày)
+                                                Gói thuốc
                                             </th>
                                             <th className="px-3 py-2">
-                                                Hướng dẫn
+                                                Hướng dẫn thêm
                                             </th>
                                         </tr>
                                     </thead>
@@ -506,49 +917,56 @@ export default function Doctor_PetInformationForm({
                                                                 </option>
                                                             )
                                                         )}
+                                                    </select>{" "}
+                                                </td>
+                                                <td className="px-3 py-2">
+                                                    <select
+                                                        className="w-full border rounded px-2 py-1"
+                                                        value={item.packageId}
+                                                        onChange={(e) => {
+                                                            handlePrescriptionChange(
+                                                                idx,
+                                                                "packageId",
+                                                                e.target.value
+                                                            );
+                                                        }}
+                                                        disabled={
+                                                            !item.medicineId
+                                                        }
+                                                    >
+                                                        <option value="">
+                                                            {item.medicineId
+                                                                ? "Chọn gói thuốc"
+                                                                : "Chọn thuốc trước"}
+                                                        </option>
+                                                        {item.medicineId &&
+                                                            availablePackages
+                                                                .filter(
+                                                                    (pkg) =>
+                                                                        pkg.medicineId ===
+                                                                        item.medicineId
+                                                                )
+                                                                .map((pkg) => (
+                                                                    <option
+                                                                        key={
+                                                                            pkg.packageId
+                                                                        }
+                                                                        value={
+                                                                            pkg.packageId
+                                                                        }
+                                                                    >
+                                                                        {
+                                                                            pkg.quantity
+                                                                        }{" "}
+                                                                        {pkg
+                                                                            .medicine
+                                                                            ?.unit ||
+                                                                            "units"}
+                                                                        {pkg.instruction &&
+                                                                            ` - ${pkg.instruction}`}
+                                                                    </option>
+                                                                ))}{" "}
                                                     </select>
-                                                </td>
-                                                <td className="px-3 py-2">
-                                                    <input
-                                                        className="w-full border rounded px-1 py-1"
-                                                        value={item.dosage}
-                                                        onChange={(e) =>
-                                                            handlePrescriptionChange(
-                                                                idx,
-                                                                "dosage",
-                                                                e.target.value
-                                                            )
-                                                        }
-                                                        placeholder="1 viên"
-                                                    />
-                                                </td>
-                                                <td className="px-3 py-2">
-                                                    <input
-                                                        className="w-full border rounded px-1 py-1"
-                                                        value={item.frequency}
-                                                        onChange={(e) =>
-                                                            handlePrescriptionChange(
-                                                                idx,
-                                                                "frequency",
-                                                                e.target.value
-                                                            )
-                                                        }
-                                                        placeholder="2 lần/ngày"
-                                                    />
-                                                </td>
-                                                <td className="px-3 py-2">
-                                                    <input
-                                                        className="w-full border rounded px-1 py-1"
-                                                        value={item.duration}
-                                                        onChange={(e) =>
-                                                            handlePrescriptionChange(
-                                                                idx,
-                                                                "duration",
-                                                                e.target.value
-                                                            )
-                                                        }
-                                                        placeholder="7"
-                                                    />
                                                 </td>
                                                 <td className="px-3 py-2">
                                                     <input
@@ -563,7 +981,7 @@ export default function Doctor_PetInformationForm({
                                                                 e.target.value
                                                             )
                                                         }
-                                                        placeholder="Uống sau ăn"
+                                                        placeholder="Ghi chú thêm (nếu có)"
                                                     />
                                                 </td>
                                             </tr>
@@ -600,18 +1018,215 @@ export default function Doctor_PetInformationForm({
                                 className="px-8 py-3 bg-gray-500 text-white rounded-lg font-semibold hover:bg-gray-600 transition"
                             >
                                 Hủy
-                            </button>
+                            </button>{" "}
                             <button
                                 type="submit"
                                 disabled={loading}
                                 className="px-8 py-3 bg-[#7bb12b] text-white rounded-lg font-semibold hover:bg-[#6ba024] transition disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                {loading ? "Đang lưu..." : "Lưu bệnh án"}
-                            </button>
+                                {loading
+                                    ? "Đang lưu..."
+                                    : existingMedicalRecord
+                                    ? "Cập nhật bệnh án"
+                                    : "Tạo bệnh án"}
+                            </button>{" "}
                         </div>
                     </form>
                 </div>
             </div>
+
+            {/* Package Management Modal */}
+            {showPackageModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white p-6 rounded-lg max-w-4xl w-full mx-4 max-h-[80vh] overflow-y-auto">
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-xl font-semibold">
+                                Quản lý gói thuốc
+                            </h2>
+                            <button
+                                onClick={resetPackageForm}
+                                className="text-gray-500 hover:text-gray-700"
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        {/* Package Form */}
+                        <form
+                            onSubmit={handleCreatePackage}
+                            className="mb-6 p-4 bg-gray-50 rounded-lg"
+                        >
+                            <h3 className="text-lg font-medium mb-4">
+                                {editingPackage
+                                    ? "Chỉnh sửa gói thuốc"
+                                    : "Thêm gói thuốc mới"}
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium mb-1">
+                                        Thuốc *
+                                    </label>
+                                    <select
+                                        required
+                                        value={packageForm.medicineId}
+                                        onChange={(e) =>
+                                            setPackageForm({
+                                                ...packageForm,
+                                                medicineId: e.target.value,
+                                            })
+                                        }
+                                        className="w-full px-3 py-2 border rounded-lg"
+                                        disabled={!!editingPackage}
+                                    >
+                                        <option value="">Chọn thuốc</option>
+                                        {medicines.map((medicine) => (
+                                            <option
+                                                key={medicine.medicineId}
+                                                value={medicine.medicineId}
+                                            >
+                                                {medicineService.formatMedicineName(
+                                                    medicine
+                                                )}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium mb-1">
+                                        Số lượng trong gói *
+                                    </label>
+                                    <input
+                                        type="number"
+                                        required
+                                        min="1"
+                                        value={packageForm.quantity}
+                                        onChange={(e) =>
+                                            setPackageForm({
+                                                ...packageForm,
+                                                quantity: Number(
+                                                    e.target.value
+                                                ),
+                                            })
+                                        }
+                                        className="w-full px-3 py-2 border rounded-lg"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium mb-1">
+                                        Hướng dẫn sử dụng
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={packageForm.instruction}
+                                        onChange={(e) =>
+                                            setPackageForm({
+                                                ...packageForm,
+                                                instruction: e.target.value,
+                                            })
+                                        }
+                                        className="w-full px-3 py-2 border rounded-lg"
+                                        placeholder="Ví dụ: Uống sau ăn"
+                                    />
+                                </div>
+                            </div>
+                            <div className="flex gap-2 mt-4">
+                                <button
+                                    type="button"
+                                    onClick={resetPackageForm}
+                                    className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
+                                >
+                                    Hủy
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                                >
+                                    {editingPackage ? "Cập nhật" : "Thêm"}
+                                </button>
+                            </div>
+                        </form>
+
+                        {/* Existing Packages List */}
+                        <div>
+                            <h3 className="text-lg font-medium mb-4">
+                                Danh sách gói thuốc hiện có
+                            </h3>
+                            <div className="space-y-4 max-h-64 overflow-y-auto">
+                                {medicines.map((medicine) => {
+                                    const medicinePackages = allPackages.filter(
+                                        (pkg) =>
+                                            pkg.medicineId ===
+                                            medicine.medicineId
+                                    );
+                                    if (medicinePackages.length === 0)
+                                        return null;
+
+                                    return (
+                                        <div key={medicine.medicineId}>
+                                            <h4 className="font-medium text-gray-800 mb-2">
+                                                {medicine.name}{" "}
+                                                {medicine.concentration &&
+                                                    `(${medicine.concentration})`}
+                                            </h4>
+                                            {medicinePackages.map((pkg) => (
+                                                <div
+                                                    key={pkg.packageId}
+                                                    className="bg-white p-3 rounded border flex justify-between items-center"
+                                                >
+                                                    <div>
+                                                        <div className="font-medium">
+                                                            {pkg.quantity}{" "}
+                                                            {pkg.medicine
+                                                                ?.unit ||
+                                                                medicine.unit ||
+                                                                "units"}
+                                                        </div>
+                                                        {pkg.instruction && (
+                                                            <div className="text-sm text-gray-600">
+                                                                {
+                                                                    pkg.instruction
+                                                                }
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <div className="flex gap-2">
+                                                        <button
+                                                            onClick={() =>
+                                                                handleEditPackage(
+                                                                    pkg
+                                                                )
+                                                            }
+                                                            className="text-blue-600 hover:text-blue-800 text-sm"
+                                                        >
+                                                            Sửa
+                                                        </button>
+                                                        <button
+                                                            onClick={() =>
+                                                                handleDeletePackage(
+                                                                    pkg.packageId,
+                                                                    medicine.medicineId
+                                                                )
+                                                            }
+                                                            className="text-red-600 hover:text-red-800 text-sm"
+                                                        >
+                                                            Xóa
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    );
+                                })}
+                                {allPackages.length === 0 && (
+                                    <div className="text-center py-8 text-gray-600">
+                                        Chưa có gói thuốc nào
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

@@ -7,25 +7,80 @@ import {
     medicalRecordService,
     MedicalRecord,
 } from "../../services/medicalRecordService";
+import { getUser } from "../../utils/auth";
 
 export default function DoctorMedicalRecordPage() {
     const navigate = useNavigate();
     const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
+    const [selectedMedicalRecord, setSelectedMedicalRecord] =
+        useState<MedicalRecord | null>(null);
     const [pets, setPets] = useState<Pet[]>([]);
     const [medicalRecords, setMedicalRecords] = useState<MedicalRecord[]>([]);
+    const [doctorMedicalRecords, setDoctorMedicalRecords] = useState<
+        MedicalRecord[]
+    >([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        loadPets();
+        loadDoctorMedicalRecords();
     }, []);
-
-    const loadPets = async () => {
+    const loadDoctorMedicalRecords = async () => {
         try {
             setLoading(true);
-            const petsData = await petService.getAllPets();
-            setPets(petsData);
+            const currentUser = getUser();
+            console.log(
+                "Current user in DoctorMedicalRecordPage:",
+                currentUser
+            );
+
+            if (!currentUser) {
+                navigate("/login");
+                return;
+            }
+
+            // Load medical records for current doctor
+            const records = await medicalRecordService.getAllMedicalRecords();
+            console.log("All medical records:", records);
+
+            // Handle case where records might be undefined or empty
+            if (!records || !Array.isArray(records)) {
+                console.warn("No medical records found or invalid response");
+                setDoctorMedicalRecords([]);
+                setPets([]);
+                return;
+            }
+
+            const doctorRecords = records.filter(
+                (record) => record.doctorId === currentUser.id
+            );
+            console.log("Filtered doctor records:", doctorRecords);
+            console.log("Current user ID:", currentUser.id);
+            setDoctorMedicalRecords(doctorRecords);
+
+            // Extract unique pets from doctor's medical records
+            const uniquePets = new Map<string, Pet>();
+            doctorRecords.forEach((record) => {
+                if (record.appointment?.pet) {
+                    const pet = record.appointment.pet;
+                    if (!uniquePets.has(pet.petId)) {
+                        uniquePets.set(pet.petId, {
+                            petId: pet.petId,
+                            name: pet.name,
+                            species: pet.species || "",
+                            breed: "", // Not available in medical record response
+                            gender: "", // Not available in medical record response
+                            color: "", // Not available in medical record response
+                            imageUrl: "", // Not available in medical record response
+                            identifyingMarks: "", // Not available in medical record response
+                            ownerId: "", // Not available in medical record response
+                            owner: undefined, // Not available in medical record response
+                        });
+                    }
+                }
+            });
+            setPets(Array.from(uniquePets.values()));
         } catch (error: any) {
-            console.error("Failed to load pets:", error);
+            console.error("Failed to load medical records:", error);
             if (error?.response?.status === 401) {
                 navigate("/login");
             }
@@ -36,17 +91,24 @@ export default function DoctorMedicalRecordPage() {
 
     const loadMedicalRecords = async (petId: string) => {
         try {
-            const records = await medicalRecordService.getMedicalRecordsByPet(
-                petId
+            // Filter doctor's medical records for the selected pet
+            const petRecords = doctorMedicalRecords.filter(
+                (record) => record.appointment?.pet?.petId === petId
             );
-            setMedicalRecords(records);
+            setMedicalRecords(petRecords);
         } catch (error: any) {
             console.error("Failed to load medical records:", error);
         }
     };
-
     const handlePetSelect = (pet: Pet) => {
         setSelectedPet(pet);
+
+        // Find existing medical record for this pet
+        const existingRecord = doctorMedicalRecords.find(
+            (record) => record.appointment?.pet?.petId === pet.petId
+        );
+        setSelectedMedicalRecord(existingRecord || null);
+
         loadMedicalRecords(pet.petId);
     };
 
@@ -150,6 +212,7 @@ export default function DoctorMedicalRecordPage() {
                         className="mx-4 max-w-2xl w-full"
                         onClick={(e) => e.stopPropagation()}
                     >
+                        {" "}
                         <Doctor_PetInformationForm
                             pet={{
                                 id: selectedPet.petId,
@@ -163,8 +226,24 @@ export default function DoctorMedicalRecordPage() {
                                 imageUrl:
                                     selectedPet.imageUrl ||
                                     "/api/placeholder/150/150",
+                            }}                            existingMedicalRecord={selectedMedicalRecord}                            onSuccess={() => {
+                                // Reload medical records when save is successful
+                                loadDoctorMedicalRecords().then(() => {
+                                    // Update selectedMedicalRecord with latest data
+                                    if (selectedPet) {
+                                        const updatedRecord = doctorMedicalRecords.find(
+                                            (record) => record.appointment?.pet?.petId === selectedPet.petId
+                                        );
+                                        setSelectedMedicalRecord(updatedRecord || null);
+                                    }
+                                });
                             }}
-                            onClose={() => setSelectedPet(null)}
+                            onClose={() => {
+                                setSelectedPet(null);
+                                setSelectedMedicalRecord(null);
+                                // Reload medical records after closing to get updated data
+                                loadDoctorMedicalRecords();
+                            }}
                         />
                     </div>
                 </div>

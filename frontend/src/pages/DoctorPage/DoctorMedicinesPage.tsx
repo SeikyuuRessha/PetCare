@@ -43,7 +43,6 @@ export default function DoctorMedicinesPage() {
     useEffect(() => {
         loadData();
     }, []);
-
     const loadData = async () => {
         try {
             setLoading(true);
@@ -51,9 +50,10 @@ export default function DoctorMedicinesPage() {
                 medicineService.getAll(),
                 medicationPackageService.getAll(),
             ]);
-            setMedicines(medicinesData);
-            setPackages(packagesData);
+            setMedicines(Array.isArray(medicinesData) ? medicinesData : []);
+            setPackages(Array.isArray(packagesData) ? packagesData : []);
         } catch (error: any) {
+            console.error("Error loading data:", error);
             setError(error.message || "Failed to load data");
             if (error?.response?.status === 401) {
                 navigate("/login");

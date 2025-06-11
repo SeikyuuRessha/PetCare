@@ -32,6 +32,7 @@ export interface CreateMedicalRecordData {
 }
 
 export interface UpdateMedicalRecordData {
+    doctorId?: string;
     diagnosis?: string;
     nextCheckupDate?: string;
 }
@@ -43,24 +44,21 @@ export const medicalRecordService = {
     ): Promise<MedicalRecord> => {
         const response = await api.post("/medical-records", data);
         return response.data.data;
-    },
-
-    // Get all medical records (DOCTOR, ADMIN)
+    }, // Get all medical records (DOCTOR, ADMIN)
     getAllMedicalRecords: async (): Promise<MedicalRecord[]> => {
         const response = await api.get("/medical-records");
-        return response.data.data.items;
+        // Handle the response structure from handleService
+        return response.data.data || [];
     },
 
     // Get medical record by ID (DOCTOR, ADMIN)
     getMedicalRecordById: async (id: string): Promise<MedicalRecord> => {
         const response = await api.get(`/medical-records/${id}`);
         return response.data.data;
-    },
-
-    // Get medical records by pet ID (DOCTOR, ADMIN, pet owner)
+    }, // Get medical records by pet ID (DOCTOR, ADMIN, pet owner)
     getMedicalRecordsByPet: async (petId: string): Promise<MedicalRecord[]> => {
         const response = await api.get(`/medical-records/pet/${petId}`);
-        return response.data.data.items;
+        return response.data.data || [];
     },
 
     // Get medical records by appointment ID
@@ -70,7 +68,7 @@ export const medicalRecordService = {
         const response = await api.get(
             `/medical-records/appointment/${appointmentId}`
         );
-        return response.data.data.items;
+        return response.data.data || [];
     },
 
     // Update medical record (DOCTOR, ADMIN)

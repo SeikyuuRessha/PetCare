@@ -56,12 +56,10 @@ export class AppointmentsController {
     @Get("pet/:petId")
     findByPet(@Param("petId") petId: string) {
         return this.appointmentsService.findByPet(petId);
-    }
-
-    // DOCTOR and ADMIN can update any appointment
+    } // DOCTOR, ADMIN and EMPLOYEE can update any appointment
     @Patch(":id")
     @UseGuards(RolesGuard)
-    @Roles("DOCTOR", "ADMIN")
+    @Roles("DOCTOR", "ADMIN", "EMPLOYEE")
     update(@Param("id") id: string, @Body() updateAppointmentDto: UpdateAppointmentDto) {
         return this.appointmentsService.update(id, updateAppointmentDto);
     }

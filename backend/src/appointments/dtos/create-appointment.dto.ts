@@ -11,7 +11,6 @@ export class CreateAppointmentDto {
     @IsOptional()
     @IsEnum(AppointmentStatus)
     status?: AppointmentStatus = AppointmentStatus.PENDING;
-
     @IsOptional()
     @IsString()
     symptoms?: string;

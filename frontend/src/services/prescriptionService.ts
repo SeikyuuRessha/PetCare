@@ -46,15 +46,7 @@ export interface Prescription {
 }
 
 export interface CreatePrescriptionData {
-    medicalRecordId: string;
-    instructions?: string;
-    prescriptionDetails: {
-        medicineId: string;
-        dosage: string;
-        frequency: string;
-        duration: string;
-        instructions?: string;
-    }[];
+    recordId: string; // Changed from medicalRecordId to match backend
 }
 
 export interface UpdatePrescriptionData {

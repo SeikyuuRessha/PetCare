@@ -5,23 +5,93 @@ import {
     appointmentService,
     Appointment,
 } from "../../services/appointmentService";
+import {
+    medicalRecordService,
+    MedicalRecord,
+} from "../../services/medicalRecordService";
+import { getUser } from "../../utils/auth";
+
+// Interface for appointment with medical record info
+interface AppointmentWithMedicalRecord extends Appointment {
+    medicalRecord?: MedicalRecord;
+}
 
 export default function DoctorAppointmentPage() {
     const navigate = useNavigate();
     const [selectedAppointment, setSelectedAppointment] = useState<any>(null);
-    const [appointments, setAppointments] = useState<Appointment[]>([]);
+    const [appointments, setAppointments] = useState<
+        AppointmentWithMedicalRecord[]
+    >([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        loadAppointments();
+        loadDoctorAppointments();
     }, []);
-
-    const loadAppointments = async () => {
+    const loadDoctorAppointments = async () => {
         try {
             setLoading(true);
-            const appointmentsData =
+            const currentUser = getUser();
+            console.log("Current user in DoctorAppointmentPage:", currentUser);
+
+            if (!currentUser) {
+                navigate("/login");
+                return;
+            }
+
+            // Load all medical records for current doctor
+            const allMedicalRecords =
+                await medicalRecordService.getAllMedicalRecords();
+            console.log("All medical records:", allMedicalRecords);
+
+            // Handle case where medical records might be undefined or empty
+            if (!allMedicalRecords || !Array.isArray(allMedicalRecords)) {
+                console.warn("No medical records found or invalid response");
+                setAppointments([]);
+                return;
+            }
+
+            const doctorMedicalRecords = allMedicalRecords.filter(
+                (record) => record.doctorId === currentUser.id
+            );
+            console.log(
+                "Filtered doctor medical records:",
+                doctorMedicalRecords
+            );
+            console.log("Current user ID:", currentUser.id);
+
+            // Get all appointments and filter those with medical records assigned to this doctor
+            const allAppointments =
                 await appointmentService.getAllAppointmentsAdmin();
-            setAppointments(appointmentsData);
+
+            // Handle case where appointments might be undefined
+            if (!allAppointments || !Array.isArray(allAppointments)) {
+                console.warn("No appointments found or invalid response");
+                setAppointments([]);
+                return;
+            }
+
+            // Create a map of appointmentId -> medical record
+            const appointmentRecordMap = new Map<string, MedicalRecord>();
+            doctorMedicalRecords.forEach((record) => {
+                if (record.appointmentId) {
+                    appointmentRecordMap.set(record.appointmentId, record);
+                }
+            });
+
+            // Filter appointments that are assigned to this doctor via medical records
+            const doctorAppointments: AppointmentWithMedicalRecord[] =
+                allAppointments
+                    .filter((appointment) =>
+                        appointmentRecordMap.has(appointment.appointmentId)
+                    )
+                    .map((appointment) => ({
+                        ...appointment,
+                        medicalRecord: appointmentRecordMap.get(
+                            appointment.appointmentId
+                        ),
+                    }));
+
+            setAppointments(doctorAppointments);
         } catch (error: any) {
             console.error("Failed to load appointments:", error);
             if (error?.response?.status === 401) {
@@ -37,7 +107,7 @@ export default function DoctorAppointmentPage() {
             await appointmentService.updateAppointment(appointmentId, {
                 status: "CONFIRMED",
             });
-            await loadAppointments(); // Reload data
+            await loadDoctorAppointments(); // Reload data
             setSelectedAppointment(null);
             alert("Đã xác nhận lịch khám thành công!");
         } catch (error: any) {
@@ -51,7 +121,7 @@ export default function DoctorAppointmentPage() {
             await appointmentService.updateAppointment(appointmentId, {
                 status: "CANCELLED",
             });
-            await loadAppointments(); // Reload data
+            await loadDoctorAppointments(); // Reload data
             setSelectedAppointment(null);
             alert("Đã từ chối lịch khám!");
         } catch (error: any) {
