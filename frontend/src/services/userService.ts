@@ -2,16 +2,15 @@ import api from "./api";
 
 // User service functions
 export interface User {
-    userId: string;
-    id: string;
+    userId: string; // Đổi từ id thành userId để phù hợp với backend
     username: string;
-    email: string;
+    email?: string;
     fullName: string;
     phone?: string;
     address?: string;
     role: string;
-    createdAt: string;
-    updatedAt: string;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export interface UserProfile {
@@ -35,10 +34,9 @@ export const userService = {
         return response.data.data;
     },
 
-    // Get all users (ADMIN only)
     getAllUsers: async (): Promise<User[]> => {
         const response = await api.get("/users");
-        return response.data.data;
+        return response.data.data || [];
     },
 
     // Get user by ID (ADMIN only)
@@ -60,8 +58,4 @@ export const userService = {
     deleteUser: async (id: string): Promise<void> => {
         await api.delete(`/users/${id}`);
     },
-    getAll: async (): Promise<User[]> => {
-        const response = await api.get("/users");
-        return response.data.data.items || [];
-    }
 };
