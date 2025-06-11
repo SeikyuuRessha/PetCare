@@ -2,9 +2,10 @@ import api from "./api";
 
 // User service functions
 export interface User {
+    userId: string;
     id: string;
     username: string;
-    email?: string;
+    email: string;
     fullName: string;
     phone?: string;
     address?: string;
@@ -37,7 +38,7 @@ export const userService = {
     // Get all users (ADMIN only)
     getAllUsers: async (): Promise<User[]> => {
         const response = await api.get("/users");
-        return response.data.data.items;
+        return response.data.data;
     },
 
     // Get user by ID (ADMIN only)
@@ -59,4 +60,8 @@ export const userService = {
     deleteUser: async (id: string): Promise<void> => {
         await api.delete(`/users/${id}`);
     },
+    getAll: async (): Promise<User[]> => {
+        const response = await api.get("/users");
+        return response.data.data.items || [];
+    }
 };
