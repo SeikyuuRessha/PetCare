@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import { User, userService } from '../../services/userService';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-interface User {
-  id: string;
+interface IUser {
+  userId: string;
   username: string;
   email: string;
   role: 'admin' | 'doctor' | 'user';
@@ -11,11 +12,25 @@ interface User {
 export default function AccountManagementPage() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const [users, setUsers] = useState<User[]>([
-    { id: '1', username: 'admin', email: 'admin@example.com', role: 'admin' },
-    { id: '2', username: 'doctor1', email: 'doctor1@example.com', role: 'doctor' },
-    { id: '3', username: 'user1', email: 'user1@example.com', role: 'user' },
-  ]);
+  const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+          
+      
+        
+        let data: User[] = await userService.getAllUsers();
+        console.log("Fetched users:", data);
+        setUsers(data);
+      } catch (error) {
+        console.error("Failed to fetch users:", error);
+        // Optionally, set an error state here to display to the user
+      }
+    };
+
+    fetchUsers();
+  }, []); // Empty dependency array means this effect runs once on mount
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -27,9 +42,10 @@ export default function AccountManagementPage() {
     ));
   };
 
-  const handleDelete = (userId: string) => {
+  const handleDelete = async (userId: string) => {
     if (window.confirm('Bạn có chắc muốn xóa tài khoản này?')) {
-      setUsers(users.filter(user => user.id !== userId));
+      await userService.deleteUser(userId);
+      setUsers(users.filter(user => user.userId !== userId));
     }
   };
 
@@ -103,7 +119,7 @@ export default function AccountManagementPage() {
                   </td>
                   <td className="px-6 py-4 text-center">
                     <button
-                      onClick={() => handleDelete(user.id)}
+                      onClick={() => handleDelete(user.userId)}
                       className="text-red-600 hover:text-red-800"
                     >
                       Xóa
