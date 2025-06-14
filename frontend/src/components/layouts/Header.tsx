@@ -87,12 +87,20 @@ export default function Header({ className = "" }: HeaderProps) {
                             className={getLinkClassName("/appointment")}
                         >
                             Đặt lịch khám
-                        </Link>
+                        </Link>{" "}
                         <Link
                             to="/payment"
                             className={getLinkClassName("/payment")}
                         >
                             Thanh toán
+                        </Link>
+                        <Link
+                            to="/user/medical-history"
+                            className={getLinkClassName(
+                                "/user/medical-history"
+                            )}
+                        >
+                            Lịch sử khám
                         </Link>
                     </>
                 )}

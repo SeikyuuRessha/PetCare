@@ -11,6 +11,7 @@ export interface MedicalRecord {
         userId: string;
         fullName: string;
         username: string;
+        phone?: string;
     };
     appointment?: {
         appointmentId: string;
@@ -20,6 +21,13 @@ export interface MedicalRecord {
             petId: string;
             name: string;
             species: string;
+            breed?: string;
+            owner?: {
+                userId: string;
+                fullName: string;
+                phone: string;
+                email: string;
+            };
         };
     };
 }
@@ -59,15 +67,27 @@ export const medicalRecordService = {
     getMedicalRecordsByPet: async (petId: string): Promise<MedicalRecord[]> => {
         const response = await api.get(`/medical-records/pet/${petId}`);
         return response.data.data || [];
-    },
-
-    // Get medical records by appointment ID
+    }, // Get medical records by appointment ID
     getMedicalRecordsByAppointment: async (
         appointmentId: string
     ): Promise<MedicalRecord[]> => {
         const response = await api.get(
             `/medical-records/appointment/${appointmentId}`
         );
+        return response.data.data || [];
+    }, // Get medical records by doctor ID (DOCTOR, ADMIN)
+    getMedicalRecordsByDoctor: async (
+        doctorId: string
+    ): Promise<MedicalRecord[]> => {
+        const response = await api.get(`/medical-records/doctor/${doctorId}`);
+        return response.data.data || [];
+    },
+
+    // Get medical records by user ID (USER, DOCTOR, ADMIN)
+    getMedicalRecordsByUser: async (
+        userId: string
+    ): Promise<MedicalRecord[]> => {
+        const response = await api.get(`/medical-records/user/${userId}`);
         return response.data.data || [];
     },
 

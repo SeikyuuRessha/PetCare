@@ -2319,15 +2319,15 @@
       }
     },
     {
-      "id": "src\\pages\\AdminPage\\AccountManagementPage.tsx:51:25-to-src\\pages\\AdminPage\\AdminPage.tsx",
+      "id": "src\\pages\\AdminPage\\AccountManagementPage.tsx:67:25-to-src\\pages\\AdminPage\\AdminPage.tsx",
       "source": "src\\pages\\AdminPage\\AccountManagementPage.tsx",
       "target": "src\\pages\\AdminPage\\AdminPage.tsx",
       "data": {
         "viaRoute": "/admin",
         "trigger": {
           "element": "navigate('/admin')",
-          "line": 51,
-          "endLine": 51,
+          "line": 67,
+          "endLine": 67,
           "column": 25,
           "endColumn": 43,
           "sourceFile": "src\\pages\\AdminPage\\AccountManagementPage.tsx"

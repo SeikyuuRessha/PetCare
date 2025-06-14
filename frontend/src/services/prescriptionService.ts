@@ -2,45 +2,47 @@ import api from "./api";
 
 // Prescription interfaces
 export interface PrescriptionDetail {
-    prescriptionDetailId: string;
     prescriptionId: string;
-    medicineId: string;
-    dosage: string;
-    frequency: string;
-    duration: string;
-    instructions?: string;
-    medicine?: {
+    packageId: string;
+    medicationPackage?: {
+        packageId: string;
         medicineId: string;
-        medicineName: string;
-        activeIngredient: string;
-        dosageForm: string;
-        strength: string;
+        quantity: number;
+        instruction?: string;
+        medicine?: {
+            medicineId: string;
+            name: string;
+            unit?: string;
+            concentration?: string;
+        };
     };
 }
 
 export interface Prescription {
     prescriptionId: string;
-    medicalRecordId: string;
-    doctorId: string;
-    prescriptionDate: string;
-    instructions?: string;
-    createdAt: string;
-    updatedAt: string;
+    recordId: string;
     medicalRecord?: {
-        medicalRecordId: string;
-        petId: string;
-        diagnosis: string;
-        visitDate: string;
-        pet?: {
-            petId: string;
-            name: string;
-            species: string;
+        recordId: string;
+        doctorId: string;
+        appointmentId?: string;
+        diagnosis?: string;
+        nextCheckupDate?: string;
+        doctor?: {
+            userId: string;
+            fullName: string;
+            username: string;
         };
-    };
-    doctor?: {
-        userId: string;
-        fullName: string;
-        username: string;
+        appointment?: {
+            appointmentId: string;
+            appointmentDate: string;
+            symptoms?: string;
+            pet?: {
+                petId: string;
+                name: string;
+                species: string;
+                breed?: string;
+            };
+        };
     };
     prescriptionDetails?: PrescriptionDetail[];
 }
@@ -72,16 +74,16 @@ export const prescriptionService = {
     getPrescriptionById: async (id: string): Promise<Prescription> => {
         const response = await api.get(`/prescriptions/${id}`);
         return response.data.data;
-    },
-
-    // Get prescriptions by medical record (DOCTOR, ADMIN, pet owner)
+    }, // Get prescriptions by medical record (DOCTOR, ADMIN, pet owner)
     getPrescriptionsByMedicalRecord: async (
         medicalRecordId: string
     ): Promise<Prescription[]> => {
         const response = await api.get(
             `/prescriptions/medical-record/${medicalRecordId}`
         );
-        return response.data.data.items;
+        // Handle different response structures
+        const data = response.data?.data || response.data;
+        return Array.isArray(data) ? data : data ? [data] : [];
     },
 
     // Get prescriptions by pet (DOCTOR, ADMIN, pet owner)

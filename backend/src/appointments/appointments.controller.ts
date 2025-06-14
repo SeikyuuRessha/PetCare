@@ -6,6 +6,8 @@ import { AccessTokenGuard } from "../auth/guards/access-token.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
 import { Roles } from "../auth/decorators/roles.decorator";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
+import { AppException } from "../common/exceptions/app.exception";
+import { ExceptionCode } from "../common/exception/exception-code";
 
 @Controller("appointments")
 @UseGuards(AccessTokenGuard)
@@ -41,7 +43,7 @@ export class AppointmentsController {
     ) {
         // Users can only view their own appointments, unless they are DOCTOR/ADMIN
         if (userRole === "USER" && userId !== currentUserId) {
-            throw new Error("Access denied");
+            throw new AppException(ExceptionCode.ACCESS_DENIED);
         }
         return this.appointmentsService.findByUser(userId);
     }

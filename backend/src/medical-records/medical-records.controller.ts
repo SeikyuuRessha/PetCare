@@ -33,7 +33,22 @@ export class MedicalRecordsController {
     @Roles("DOCTOR", "ADMIN")
     findByDoctor(@Param("doctorId") doctorId: string) {
         return this.medicalRecordsService.findByDoctor(doctorId);
-    } // DOCTOR, ADMIN and EMPLOYEE can update medical records
+    }
+
+    // USER can view medical records of their pets
+    @Get("pet/:petId")
+    @Roles("USER", "DOCTOR", "ADMIN")
+    findByPetId(@Param("petId") petId: string) {
+        return this.medicalRecordsService.findByPetId(petId);
+    }
+
+    // USER can view all medical records of their pets
+    @Get("user/:userId")
+    @Roles("USER", "DOCTOR", "ADMIN")
+    findByUserId(@Param("userId") userId: string) {
+        return this.medicalRecordsService.findByUserId(userId);
+    }
+
     @Patch(":id")
     @Roles("DOCTOR", "ADMIN", "EMPLOYEE")
     update(@Param("id") id: string, @Body() updateMedicalRecordDto: UpdateMedicalRecordDto) {

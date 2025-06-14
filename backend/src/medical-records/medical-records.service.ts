@@ -226,6 +226,124 @@ export class MedicalRecordsService {
         );
     }
 
+    async findByPetId(petId: string) {
+        return handleService(() =>
+            this.prisma.medicalRecord.findMany({
+                where: {
+                    appointment: {
+                        petId: petId,
+                    },
+                },
+                include: {
+                    doctor: {
+                        select: {
+                            userId: true,
+                            fullName: true,
+                            email: true,
+                            phone: true,
+                        },
+                    },
+                    appointment: {
+                        include: {
+                            pet: {
+                                select: {
+                                    petId: true,
+                                    name: true,
+                                    species: true,
+                                    breed: true,
+                                    owner: {
+                                        select: {
+                                            userId: true,
+                                            fullName: true,
+                                            phone: true,
+                                            email: true,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    prescription: {
+                        include: {
+                            prescriptionDetails: {
+                                include: {
+                                    medicationPackage: {
+                                        include: {
+                                            medicine: true,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                orderBy: {
+                    recordId: "desc",
+                },
+            })
+        );
+    }
+
+    async findByUserId(userId: string) {
+        return handleService(() =>
+            this.prisma.medicalRecord.findMany({
+                where: {
+                    appointment: {
+                        pet: {
+                            ownerId: userId,
+                        },
+                    },
+                },
+                include: {
+                    doctor: {
+                        select: {
+                            userId: true,
+                            fullName: true,
+                            email: true,
+                            phone: true,
+                        },
+                    },
+                    appointment: {
+                        include: {
+                            pet: {
+                                select: {
+                                    petId: true,
+                                    name: true,
+                                    species: true,
+                                    breed: true,
+                                    owner: {
+                                        select: {
+                                            userId: true,
+                                            fullName: true,
+                                            phone: true,
+                                            email: true,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    prescription: {
+                        include: {
+                            prescriptionDetails: {
+                                include: {
+                                    medicationPackage: {
+                                        include: {
+                                            medicine: true,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                orderBy: {
+                    recordId: "desc",
+                },
+            })
+        );
+    }
+
     async update(id: string, updateMedicalRecordDto: UpdateMedicalRecordDto) {
         return handleService(async () => {
             const record = await this.prisma.medicalRecord.findUnique({

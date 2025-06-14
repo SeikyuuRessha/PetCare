@@ -14,6 +14,7 @@ import PetInformationPage from "./pages/UserPage/PetInformationPage";
 import AppointmentPage from "./pages/UserPage/AppointmentPage";
 import PayPage from "./pages/UserPage/PayPage";
 import ViewBookedServicesPage from "./pages/UserPage/ViewBookedServicesPage";
+import UserMedicalHistoryPage from "./pages/UserPage/UserMedicalHistoryPage";
 
 // Services Pages
 import CareServicesPage from "./pages/UserPage/CareServicesPage";
@@ -24,6 +25,7 @@ import DoctorPage from "./pages/DoctorPage/DoctorPage";
 import DoctorMedicalRecordPage from "./pages/DoctorPage/DoctorMedicalRecordPage";
 import DoctorAppointmentPage from "./pages/DoctorPage/DoctorAppointmentPage";
 import DoctorMedicinesPage from "./pages/DoctorPage/DoctorMedicinesPage";
+import DoctorHistoryPage from "./pages/DoctorPage/DoctorHistoryPage";
 
 // Admin & Employee Pages
 import AdminPage from "./pages/AdminPage/AdminPage";
@@ -49,10 +51,14 @@ function App() {
                 <Route path="/account" element={<UserInformationPage />} />
                 <Route path="/pet-info" element={<PetInformationPage />} />
                 <Route path="/appointment" element={<AppointmentPage />} />
-                <Route path="/payment" element={<PayPage />} />
+                <Route path="/payment" element={<PayPage />} />{" "}
                 <Route
                     path="/services/booked"
                     element={<ViewBookedServicesPage />}
+                />
+                <Route
+                    path="/user/medical-history"
+                    element={<UserMedicalHistoryPage />}
                 />
                 <Route path="/services" element={<CareServicesPage />} />
                 <Route
@@ -72,7 +78,8 @@ function App() {
                 <Route
                     path="/doctor/medicines"
                     element={<DoctorMedicinesPage />}
-                />{" "}
+                />
+                <Route path="/doctor/history" element={<DoctorHistoryPage />} />{" "}
                 {/* Admin & Employee Routes */}
                 <Route path="/admin" element={<AdminPage />} />
                 <Route

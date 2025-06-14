@@ -113,30 +113,34 @@ export default function DoctorPage() {
                             </>
                         )}
                     </div>
-                </div>
-
+                </div>{" "}
                 {/* Buttons */}
-                <div className="flex flex-col md:flex-row gap-12 mt-16 w-full max-w-4xl justify-center">
+                <div className="flex flex-col md:flex-row gap-8 mt-16 w-full max-w-6xl justify-center">
                     <button
                         onClick={() => navigate("/doctor/medical-records")}
-                        className="bg-[#7bb12b] text-white text-2xl font-semibold rounded-xl px-16 py-5 shadow-md border border-black hover:bg-[#6aa11e] transition"
+                        className="bg-[#7bb12b] text-white text-xl font-semibold rounded-xl px-12 py-4 shadow-md border border-black hover:bg-[#6aa11e] transition"
                     >
                         TRANG BỆNH ÁN
                     </button>
                     <button
                         onClick={() => navigate("/doctor/appointments")}
-                        className="bg-[#1797a6] text-white text-2xl font-semibold rounded-xl px-16 py-5 shadow-md border border-black hover:bg-[#127c8a] transition"
+                        className="bg-[#1797a6] text-white text-xl font-semibold rounded-xl px-12 py-4 shadow-md border border-black hover:bg-[#127c8a] transition"
                     >
                         TRANG LỊCH KHÁM
                     </button>
                     <button
+                        onClick={() => navigate("/doctor/history")}
+                        className="bg-[#9c27b0] text-white text-xl font-semibold rounded-xl px-12 py-4 shadow-md border border-black hover:bg-[#7b1fa2] transition"
+                    >
+                        LỊCH SỬ KHÁM BỆNH
+                    </button>
+                    <button
                         onClick={() => navigate("/doctor/medicines")}
-                        className="bg-[#ff6b35] text-white text-2xl font-semibold rounded-xl px-16 py-5 shadow-md border border-black hover:bg-[#e55a30] transition"
+                        className="bg-[#ff6b35] text-white text-xl font-semibold rounded-xl px-12 py-4 shadow-md border border-black hover:bg-[#e55a30] transition"
                     >
                         QUẢN LÝ THUỐC
                     </button>
                 </div>
-
                 {/* Logout Button */}
                 <div className="mt-8">
                     <button

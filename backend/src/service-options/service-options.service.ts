@@ -5,6 +5,7 @@ import { UpdateServiceOptionDto } from "./dtos/update-service-option.dto";
 import { handleService } from "../common/utils/handleService";
 import { AppException } from "../common/exceptions/app.exception";
 import { ExceptionCode } from "../common/exception/exception-code";
+import { Prisma } from "@prisma/client";
 
 @Injectable()
 export class ServiceOptionsService {
@@ -21,8 +22,21 @@ export class ServiceOptionsService {
                 throw new AppException(ExceptionCode.SERVICE_NOT_FOUND);
             }
 
+            // Manual negative price validation
+            if (createServiceOptionDto.price !== undefined && createServiceOptionDto.price < 0) {
+                throw new AppException({ code: 400, message: "Invalid price" });
+            }
+
+            // Convert price to Decimal if provided
+            const data = {
+                ...createServiceOptionDto,
+                price: createServiceOptionDto.price
+                    ? new Prisma.Decimal(createServiceOptionDto.price.toString())
+                    : undefined,
+            };
+
             return this.prisma.serviceOption.create({
-                data: createServiceOptionDto,
+                data,
                 include: {
                     service: {
                         select: {
@@ -76,8 +90,17 @@ export class ServiceOptionsService {
     }
 
     async findByService(serviceId: string) {
-        return handleService(() =>
-            this.prisma.serviceOption.findMany({
+        return handleService(async () => {
+            // Check if service exists
+            const service = await this.prisma.service.findUnique({
+                where: { serviceId },
+            });
+
+            if (!service) {
+                throw new AppException(ExceptionCode.SERVICE_NOT_FOUND);
+            }
+
+            return this.prisma.serviceOption.findMany({
                 where: { serviceId },
                 include: {
                     service: {
@@ -88,8 +111,8 @@ export class ServiceOptionsService {
                         },
                     },
                 },
-            })
-        );
+            });
+        });
     }
 
     async update(id: string, updateServiceOptionDto: UpdateServiceOptionDto) {
@@ -102,8 +125,8 @@ export class ServiceOptionsService {
                 throw new AppException(ExceptionCode.SERVICE_OPTION_NOT_FOUND);
             }
 
-            // Check if new service exists (if updating serviceId)
-            if (updateServiceOptionDto.serviceId && updateServiceOptionDto.serviceId !== serviceOption.serviceId) {
+            // If serviceId is being updated, check if new service exists
+            if (updateServiceOptionDto.serviceId) {
                 const service = await this.prisma.service.findUnique({
                     where: { serviceId: updateServiceOptionDto.serviceId },
                 });
@@ -113,9 +136,22 @@ export class ServiceOptionsService {
                 }
             }
 
+            // Manual negative price validation
+            if (updateServiceOptionDto.price !== undefined && updateServiceOptionDto.price < 0) {
+                throw new AppException({ code: 400, message: "Invalid price" });
+            }
+
+            // Convert price to Decimal if provided
+            const data = {
+                ...updateServiceOptionDto,
+                price: updateServiceOptionDto.price
+                    ? new Prisma.Decimal(updateServiceOptionDto.price.toString())
+                    : undefined,
+            };
+
             return this.prisma.serviceOption.update({
                 where: { optionId: id },
-                data: updateServiceOptionDto,
+                data,
                 include: {
                     service: {
                         select: {

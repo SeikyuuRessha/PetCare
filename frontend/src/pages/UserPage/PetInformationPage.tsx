@@ -67,13 +67,17 @@ export default function PetInformationPage() {
     return (
         <div className="font-sans bg-white min-h-screen">
             <TopBar />
-            <Header />
-
-            {/* Main Content */}
+            <Header /> {/* Main Content */}
             <main className="relative z-10 px-12 pt-2 pb-12">
-                <h2 className="text-2xl font-bold mt-6 mb-6">
-                    Thông tin thú cưng
-                </h2>
+                <div className="flex justify-between items-center mt-6 mb-6">
+                    <h2 className="text-2xl font-bold">Thông tin thú cưng</h2>
+                    <button
+                        onClick={() => navigate("/user/medical-history")}
+                        className="bg-[#1797a6] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#127c8a] transition"
+                    >
+                        Xem lịch sử khám bệnh
+                    </button>
+                </div>
 
                 {loading ? (
                     <div className="flex justify-center items-center h-32">
@@ -186,7 +190,6 @@ export default function PetInformationPage() {
                     </button>
                 </div>
             </main>
-
             {/* Pet Information Form Modal */}
             {showPetForm && (
                 <div
@@ -231,7 +234,6 @@ export default function PetInformationPage() {
                     </div>
                 </div>
             )}
-
             <Footer />
         </div>
     );
